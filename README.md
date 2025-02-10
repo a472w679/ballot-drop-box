@@ -1,30 +1,27 @@
-# Douglas County Ballot Drop Box Scanner
-A system that scans and tracks envelopes deposited in ballot drop boxes using an IMb scanner and Raspberry Pi.  
+# Ballot Drop Box Scanner
+A system that scans, tracks, and stores information of ballot envelopes that are deposited in ballot drop boxes.  
 
 ## Setup 
-
 1) Make a virtual env in the project root directory 
 ```
-python3 -m venv .venv 
+python -m venv .venv 
 ```
 2) Activate it 
 3) Install Django 
 ```
-pip install django 
+pip install Django 
 ```
+4) Enter the first `dropbox` directory and run `python3 manage.py runserver`
+5) copy the localhost url into your browser 
 
-4) Go to the first `dropbox` directory 
-5) run `python3 manage.py runserver`
-6) copy the localhost url into your browser 
-
-## Dev Notes 
-### Where the actual web app is 
+## FAQ 
+### Where is the web app?
 `./dropbox/envelopeimb`
 
-html stuff is in `./dropbox/envelopeimb/templates`
+Html stuff is in `./dropbox/envelopeimb/templates`
 
-### Where the Schema is 
+### Where is the Database/Schema?
 `./dropbox/envelopeimb/models.py`
 
-### Where Rasberry Pi related code goes 
+### Where is the rasberry pi/barcode scanning code?
 `./dropbox/imbscanner/`
