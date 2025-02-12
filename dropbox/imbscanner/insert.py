@@ -16,9 +16,10 @@ if __name__ == '__main__':
     from envelopeimb.models import imb
 
     # this commented code inserts debug test data into the database
-    # imbdata = imb(date='Feb 20', streetaddress='711 W 23rd St', city="Lawrence", zipcode="66046", status="Processed")
+    # imbdata = imb(date='Feb 20', imb="12345678901234567890", code39="012345678",streetaddress='711 W 23rd St', city="Lawrence", zipcode="66046", status="Processed")
     # imbdata.save()
     # printing out that data 
     # for test in imb.objects.all():
     #     print(test.date, test.streetaddress, test.city, test.zipcode, test.status)
+    # imb.objects.all().delete() # clearing the query set 
 

@@ -7,9 +7,9 @@ A system that scans, tracks, and stores information of ballot envelopes that are
 python -m venv .venv 
 ```
 2) Activate it 
-3) Install Django 
+3) Install the requirements  
 ```
-pip install Django 
+pip install -r requirements.txt 
 ```
 4) Enter the first `dropbox` directory and run `python3 manage.py runserver`
 5) copy the localhost url into your browser 

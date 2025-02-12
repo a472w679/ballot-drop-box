@@ -68,34 +68,39 @@
           >
             <thead>
               <tr>
-                <th class="py-2 px-4 border-b">Date</th>
-                <th class="py-2 px-4 border-b">Street Address</th>
-                <th class="py-2 px-4 border-b">City</th>
-                <th class="py-2 px-4 border-b">ZIP Code</th>
-                <th class="py-2 px-4 border-b">Other (status, etc.)</th>
+                <th class="py-2 px-1 border-b">Date</th>
+                <th class="py-2 px-1 border-b">Code 39</th>
+                <th class="py-2 px-1 border-b">IMb</th>
+                <th class="py-2 px-1 border-b">Street Address</th>
+                <th class="py-2 px-1 border-b">City</th>
+                <th class="py-2 px-1 border-b">ZIP Code</th>
+                <th class="py-2 px-1 border-b">Other (status, etc.)</th>
               </tr>
             </thead>
             {% for data in imbdata %}
             <tbody>
               <tr>
-                <td class="py-2 px-13 border-b">{{data.date}}</td>
-                <td class="py-2 px-13 border-b">{{data.streetaddress}}</td>
-
-                <td class="py-2 px-13 border-b">{{data.city}}</td>
-                <td class="py-2 px-13 border-b">{{data.zipcode}}</td>
-                <td class="py-2 px-13 border-b">{{data.status}}</td>
+                <td class="py-1 px-9 border-b">{{data.date}}</td>
+                <td class="py-1 px-9 border-b">{{data.code39}}</td>
+                <td class="py-1 px-9 border-b">{{data.imb}}</td>
+                <td class="py-1 px-9 border-b">{{data.streetaddress}}</td>
+                <td class="py-1 px-9 border-b">{{data.city}}</td>
+                <td class="py-1 px-9 border-b">{{data.zipcode}}</td>
+                <td class="py-1 px-9 border-b">{{data.status}}</td>
               </tr>
             </tbody>
             {% endfor %}
           </table>
         </div>
 
-        <!-- Download Button -->
+        <!-- Download into csv Button -->
+        <form action={% url 'export' %} method="get" target="_blank"> 
         <button
-          class="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          type="submit" class="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Download CSV
         </button>
+        </form>
       </div>
     </div>
   </body>
