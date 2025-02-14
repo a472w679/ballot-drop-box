@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('envelopeimb/', views.envelopeimb, name='envelopeimb'),
-    path('export/', views.export, name='export'),
-    path('', views.envelopeimb, name='envelopeimb'),
+    path('', views.home, name='envelopeimb'),
+    path('dashboard/<int:dropbox_id>', views.dashboard, name='envelopeimb'),
+    path('export/<int:dropbox_id>', views.export, name='export'),
 ]

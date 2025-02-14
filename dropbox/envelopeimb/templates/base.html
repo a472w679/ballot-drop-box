@@ -1,107 +1,43 @@
-{% load static %}.
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
+    <title>{% block title %}{% endblock%}</title>
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script src="{% static 'js/tables.js' %}"></script>
   </head>
-  <body class="bg-gray-100 p-8">
-    <div class="flex">
-      <!-- Sidebar -->
-      <div class="w-1/4 bg-white p-6 rounded-lg shadow-lg mr-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
 
-        <!-- Date Range Filter -->
-        <div class="mb-6">
-          <label for="dateRange" class="block text-gray-700">Date Range:</label>
-          <input
-            type="text"
-            id="dateRange"
-            class="mt-1 p-2 border rounded w-full"
-            value="Feb 09 - Feb 12"
-            readonly
-          />
+  <body class="bg-gray-100">
+    <nav class="bg-white shadow-lg mb-4">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="flex justify-between items-center py-4">
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <a href="/" class="flex items-center">
+              <img
+                src="{% static 'images/logo.png' %}"
+                alt="Logo"
+                class="h-8 w-auto"
+              />
+              <span class="ml-2 text-xl font-semibold text-gray-800"></span>}
+            </a>
+          </div>
+
+          <!-- Home Button -->
+          <div class="flex items-center">
+            <a
+              href="/"
+              class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Home
+            </a>
+          </div>
         </div>
-
-        <!-- Drop Box Tabs -->
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Drop Boxes</h2>
-        <ul>
-          <li class="mb-2">
-            <button
-              onclick="showTable('box1')"
-              class="w-full text-left p-2 bg-blue-100 rounded hover:bg-blue-200"
-            >
-              Drop Box #1
-            </button>
-          </li>
-          <li class="mb-2">
-            <button
-              onclick="showTable('box2')"
-              class="w-full text-left p-2 bg-blue-100 rounded hover:bg-blue-200"
-            >
-              Drop Box #2
-            </button>
-          </li>
-          <li class="mb-2">
-            <button
-              onclick="showTable('box3')"
-              class="w-full text-left p-2 bg-blue-100 rounded hover:bg-blue-200"
-            >
-              Drop Box #3
-            </button>
-          </li>
-        </ul>
       </div>
+    </nav>
 
-      <!-- Main Content -->
-      <div class="flex-1 bg-white p-6 rounded-lg shadow-lg">
-        <h1 class="text-2xl font-bold text-blue-600 mb-6">Dropbox Dashboard</h1>
-
-        <!-- Table for Drop Box #1 -->
-        <div id="box1" class="table-container">
-          <table
-            id="dataTable"
-            class="min-w-full bg-white border border-gray-300"
-          >
-            <thead>
-              <tr>
-                <th class="py-2 px-1 border-b">Date</th>
-                <th class="py-2 px-1 border-b">Code 39</th>
-                <th class="py-2 px-1 border-b">IMb</th>
-                <th class="py-2 px-1 border-b">Street Address</th>
-                <th class="py-2 px-1 border-b">City</th>
-                <th class="py-2 px-1 border-b">ZIP Code</th>
-                <th class="py-2 px-1 border-b">Other (status, etc.)</th>
-              </tr>
-            </thead>
-            {% for data in imbdata %}
-            <tbody>
-              <tr>
-                <td class="py-1 px-9 border-b">{{data.date}}</td>
-                <td class="py-1 px-9 border-b">{{data.code39}}</td>
-                <td class="py-1 px-9 border-b">{{data.imb}}</td>
-                <td class="py-1 px-9 border-b">{{data.streetaddress}}</td>
-                <td class="py-1 px-9 border-b">{{data.city}}</td>
-                <td class="py-1 px-9 border-b">{{data.zipcode}}</td>
-                <td class="py-1 px-9 border-b">{{data.status}}</td>
-              </tr>
-            </tbody>
-            {% endfor %}
-          </table>
-        </div>
-
-        <!-- Download into csv Button -->
-        <form action={% url 'export' %} method="get" target="_blank"> 
-        <button
-          type="submit" class="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Download CSV
-        </button>
-        </form>
-      </div>
-    </div>
+    {% block content %} {% endblock %}
   </body>
 </html>
