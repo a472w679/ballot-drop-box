@@ -3,6 +3,8 @@
 
 {% block title %} Dashboard #{{dropbox_id}} {% endblock %}
     {% block content %} 
+
+
         <div class="flex">
       <!-- Sidebar -->
       <div class="w-1/4 bg-white p-6 rounded-lg shadow-lg mr-6">
@@ -95,14 +97,12 @@
         </form>
 
      <div class="mt-8">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">Dropbox Live Feed</h2>
-          <video controls class="w-full rounded-lg shadow-lg">
-            <source src="{% static 'videos/dropbox_tutorial.mp4' %}" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
+          <h2 class="text-xl font-semibold text-gray-800 mb-2">Dropbox Live Feed</h2>
+          <video id="livefeed" autoplay playsinline class="w-[720px] h-[480px] ">
+
         </div>
       </div>
     </div>
 
-
+    <script src="{% static 'js/live_feed.js' %}"></script>
     {% endblock %}
