@@ -63,9 +63,9 @@ def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dropbox.settings")
     django.setup()
 
-    from envelopeimb.models import imb
+    from dashboard.models import EnvelopeScan
 
-    poll_scanner_input(imb) 
+    poll_scanner_input(EnvelopeScan) 
     # print(len(imb.objects.all().filter(code39="test"))) 
 
     # imb.objects.all().delete() # clearing the query set 

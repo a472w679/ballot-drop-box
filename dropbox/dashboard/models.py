@@ -2,7 +2,7 @@ from django.db import models
 
 
 # Create your models here.
-class imb(models.Model):
+class EnvelopeScan(models.Model):
   dropboxid = models.IntegerField(default=1)
   imb = models.CharField(max_length=66)
   code39 = models.CharField(max_length=44)
