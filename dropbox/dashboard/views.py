@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
 
-from .models import imb
+from .models import EnvelopeScan
 
 # Create your views here.
 
@@ -15,10 +15,10 @@ def home(request):
   return HttpResponse(template.render(context, request))
 
 def dashboard(request, dropbox_id):
-  envelopeimb_data = imb.objects.all().filter(dropboxid=dropbox_id).values()
+  envelope_data = EnvelopeScan.objects.all().filter(dropboxid=dropbox_id).values()
   template = loader.get_template('dropbox.html')
   context = {
-    'imbdata': envelopeimb_data,
+    'envelope_data': envelope_data,
     'dropbox_id': dropbox_id,
   }
   return HttpResponse(template.render(context, request))
@@ -28,7 +28,7 @@ def export(request, dropbox_id):  # downloads database in a csv
     writer = csv.writer(response)
     writer.writerow(['Dropbox ID', 'Code 39', 'IMb', 'Date', 'Street Address', 'City', 'Zip Code', 'Status'])
 
-    for data in imb.objects.all().filter(dropboxid=dropbox_id).values_list('dropboxid', 'imb', 'code39', 'date', 'streetaddress', 'city', 'zipcode', 'status'): 
+    for data in EnvelopeScan.objects.all().filter(dropboxid=dropbox_id).values_list('dropboxid', 'imb', 'code39', 'date', 'streetaddress', 'city', 'zipcode', 'status'): 
         writer.writerow(data)
 
     response['Content-Disposition'] = 'attachment; filename="data.csv"'

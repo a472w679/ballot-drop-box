@@ -16,12 +16,16 @@ pip install -r requirements.txt
 
 ## FAQ 
 ### Where is the web app?
-`./dropbox/envelopeimb`
+`./dropbox/dashboard`
 
-Html stuff is in `./dropbox/envelopeimb/templates`
+Html stuff is in `./dropbox/dashboard/templates`
 
 ### Where is the Database/Schema?
-`./dropbox/envelopeimb/models.py`
+`./dropbox/dashboard/models.py`
 
 ### Where is the rasberry pi/barcode scanning code?
-`./dropbox/imbscanner/`
+`./dropbox/scanner/`
+
+### How to run the system? 
+1) In one terminal run `python3 manage.py runserver` 
+2) In another terminal run `python3 scanner/insert.py`
