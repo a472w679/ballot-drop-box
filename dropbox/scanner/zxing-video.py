@@ -1,17 +1,28 @@
 import cv2
 import zxingcpp
 
-# Initialize the video capture (0 for webcam, or replace with a video file path)
+
 cap = cv2.VideoCapture(0)
+if not cap.isOpened(): 
+    print('Cannot open Camera')
+else: 
+    print('Camera opened: ', cap)
+
+'''
+picam = Picamera2() 
+picam.configure(picam.create_preview_configuration(main={"format": 'XRGB8888', "size": (640, 480)}))
+picam.start()
+'''
 
 while True:
+    # Capture frame-by-frame
     # Capture frame-by-frame
     ret, frame = cap.read()
     if not ret:
         break
 
     # Resize the frame for faster processing (optional)
-    frame = cv2.resize(frame, (640, 480))
+    frame = cv2.resize(frame, (640, 480)) 
 
     # Convert the frame to grayscale (optional but improves performance)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -27,7 +38,7 @@ while True:
         # Get the barcode text and type
         barcode_text = result.text
         barcode_format = result.format
-        print(barcode_format, barcode_text)
+        print(result, barcode_format, barcode_text)
 
         # Get the corners of the barcode
         points = [
@@ -45,11 +56,11 @@ while True:
         cv2.putText(frame, f"{barcode_format}: {barcode_text}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
     # Display the frame with detected barcodes
-    cv2.imshow('Barcode Detection', frame)
+    cv2.imshow('Barcode Detection', frame) 
 
     # Exit on 'q' key press
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    if cv2.waitKey(0) & 0xFF == ord('q'):
+        break 
 
 # Release the video capture and close windows
 cap.release()
