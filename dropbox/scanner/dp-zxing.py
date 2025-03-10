@@ -1,8 +1,20 @@
+# Name of code artifact: dp-zxing.py 
+# Brief description of what the code does: Scans barcodes using camera and opencv 
+# Programmer’s name: Darshil Patel  
+# Date the code was created: 2/20/25
+# Preconditions: Camera available    
+# Postconditions: Camera barcode scsanned and printed to screen 
+# Return values or types, and their meanings: N/A
+# Error and exception condition values or types that can occur, and their meanings: N/A
+# Side effects: 
+# Invariants: N/A
+
+import queue
+import threading
+import time
+
 import cv2
 import zxingcpp
-import threading
-import queue
-import time
 
 NUM_DECODER_THREADS = 2  # Increase based on your CPU cores
 
