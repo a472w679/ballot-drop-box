@@ -1,3 +1,14 @@
+# Name of code artifact: views.py 
+# Brief description of what the code does: Routes different templates depending on url 
+# Programmer’s name: Xavier Ruyle 
+# Date the code was created: 2/20/25 
+# Preconditions: database available 
+# Postconditions: N/A 
+# Return values or types, and their meanings: N/A 
+# Error and exception condition values or types that can occur, and their meanings: N/A 
+# Side effects: 
+# Invariants: N/A 
+
 import csv
 
 from django.http import HttpResponse

@@ -1,1 +1,8 @@
-Django >= 5.1.6
+Django==5.1.6
+asgiref==3.8.1
+numpy==2.2.3
+opencv-contrib-python==4.11.0.86
+opencv-python==4.11.0.86
+opencv-python-headless==4.11.0.86
+sqlparse==0.5.3
+zxing-cpp==2.3.0

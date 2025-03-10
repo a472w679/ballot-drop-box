@@ -6,6 +6,9 @@ A system that scans, tracks, and stores information of ballot envelopes that are
 ```
 python -m venv .venv 
 ```
+- go into .venv/pyenv.cfg  and set allow global packages to true 
+
+
 2) Activate it 
 3) Install the requirements  
 ```
