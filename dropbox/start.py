@@ -46,9 +46,12 @@ def run_command(command):
 def open_frontend(): 
     # Django development server URL
     django_url = "http://127.0.0.1:8000/"
+    # chromium_path = "/usr/share/applications/chromium.desktop"
+    # webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(chromium_path), 1 )
+
 
     try:
-        webbrowser.open(django_url)
+        webbrowser.get('chromium').open(django_url)
         print("----------")
         print(f"OPENING FRONT END AT {django_url}")
         print("----------\n")
