@@ -9,6 +9,7 @@
 # Side effects: 
 # Invariants: N/A
 
+import threading
 import os
 import select
 import sys
@@ -75,14 +76,14 @@ def poll_scanner_input(model):
 
 
 
-def poll_scanner_input_kernel_detached(model): 
+def poll_scanner_input_kernel_detached(model, id_vendor_val : int, id_product_val : int): 
     '''
     Contains modified code from the vpatron/barcode_scanner_python repo which defends against the case where a would be attacker can't just enter things in
     '''
 
     # Find our device using the VID (Vendor ID) and PID (Product ID)
     # use lsusb -v to find this 
-    dev = usb.core.find(idVendor=0x0c2e, idProduct=0x0aaf)
+    dev = usb.core.find(idVendor=id_vendor_val, idProduct=id_product_val)
     if dev is None:
         raise ValueError('USB device not found')
 
@@ -146,7 +147,17 @@ def main():
 
     from dashboard.models import EnvelopeScan
 
-    poll_scanner_input_kernel_detached(EnvelopeScan)
+    scanner1_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(EnvelopeScan, 0x0c2e, 0x0aaf,)) 
+    scanner1_thread.start()
+
+    scanner2_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(EnvelopeScan, 0x0c2e, 0x0c61,)) 
+    scanner2_thread.start()
+
+    # Join the threads 
+    scanner1_thread.join()
+    scanner2_thread.join()
+
+    # poll_scanner_input_kernel_detached(EnvelopeScan, 0x0c2e, 0x0aaf)
 
     # poll_scanner_input(EnvelopeScan) 
     # print(len(EnvelopeScan.objects.all().filter(code39="test"))) 
