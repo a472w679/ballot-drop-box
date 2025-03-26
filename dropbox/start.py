@@ -27,6 +27,7 @@ script_dir = os.path.dirname(os.path.realpath(__file__))
 
 # Path to the virtual environment's activate script
 venv_activate_path = os.path.join(script_dir, "..", ".venv", "bin", "activate")  
+udevadm_command = "sudo udevadm control --reload && sudo udevadm trigger"
 
 django_path = os.path.join(script_dir, "manage.py")
 django_command = f". {venv_activate_path} && {terminal_type} python3 {django_path} runserver"  
@@ -36,6 +37,7 @@ scanning_command = f". {venv_activate_path} && {terminal_type} python3 {scanning
 
 # List to hold the process objects
 processes = []
+
 
 def run_command(command): 
     try:
@@ -63,6 +65,7 @@ if __name__ == "__main__":
     print("SCANNING SYSTEM STARTING")
     print("---------------\n")
 
+    run_command(udevadm_command)
     run_command(django_command)
     time.sleep(1) 
     open_frontend()
