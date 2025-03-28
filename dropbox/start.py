@@ -14,11 +14,10 @@
 # TODO: make a soft link to the script on the desktop of the raspberry pi
 
 import os
+import signal
 import subprocess
-import signal 
 import time
 import webbrowser
-
 
 # TODO: NEED TO TEST ON RASPBERRY PI 
 terminal_type = "" 
