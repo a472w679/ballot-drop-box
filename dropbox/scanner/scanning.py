@@ -20,18 +20,22 @@ from post_request import send_data
 
 
 def send_code39_to_server(barcode : str) -> bool: 
-    data = {
-        "dropboxid" :"1", 
-        "date": f"{date.today()}", 
-        "imb": "", 
-        "code39": f"{barcode}",
-        "streetaddress": "", 
-        "city": "", 
-        "zipcode": "",  
-        "status": "Valid"
-    }
+    res = is_valid_code39(barcode) 
+    if res: 
+        data = {
+            "dropboxid" :"1", 
+            "date": f"{date.today()}", 
+            "imb": "", 
+            "code39": f"{res}",
+            "streetaddress": "", 
+            "city": "", 
+            "zipcode": "",  
+            "status": "Valid"
+        }
 
-    return send_data(data)
+        return send_data(data)
+    else: 
+        return False 
 
 
 def get_input(): 
@@ -42,7 +46,7 @@ def get_input():
     except KeyboardInterrupt: 
         print("Exiting...")
 
-def if_is_valid_code39(barcode : str) -> bool | str: 
+def is_valid_code39(barcode : str) -> bool | str: 
     valid_chars = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-. $/+%*")
 
     # Check if the barcode starts and ends with '*'
@@ -130,12 +134,12 @@ def main():
     scanner1_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0aaf,)) 
     scanner1_thread.start()
 
-    scanner2_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0c61,)) 
-    scanner2_thread.start()
+    # scanner2_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0c61,)) 
+    # scanner2_thread.start()
 
     # Join the threads 
     scanner1_thread.join()
-    scanner2_thread.join()
+    # scanner2_thread.join()
 
 
 
