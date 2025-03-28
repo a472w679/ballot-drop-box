@@ -6,3 +6,4 @@ opencv-python==4.11.0.86
 opencv-python-headless==4.11.0.86
 sqlparse==0.5.3
 zxing-cpp==2.3.0
+pyusb==1.3.1

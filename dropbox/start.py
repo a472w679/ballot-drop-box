@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 # Name of code artifact: start.py 
 # Brief description of what the code does: starts the entire drop box scanning system
 # Programmer’s name: Xavier Ruyle   
@@ -14,8 +15,10 @@
 
 import os
 import subprocess
+import signal 
 import time
 import webbrowser
+
 
 # TODO: NEED TO TEST ON RASPBERRY PI 
 terminal_type = "" 
@@ -24,6 +27,7 @@ script_dir = os.path.dirname(os.path.realpath(__file__))
 
 # Path to the virtual environment's activate script
 venv_activate_path = os.path.join(script_dir, "..", ".venv", "bin", "activate")  
+udevadm_command = "sudo udevadm control --reload && sudo udevadm trigger"
 
 django_path = os.path.join(script_dir, "manage.py")
 django_command = f". {venv_activate_path} && {terminal_type} python3 {django_path} runserver"  
@@ -33,6 +37,7 @@ scanning_command = f". {venv_activate_path} && {terminal_type} python3 {scanning
 
 # List to hold the process objects
 processes = []
+
 
 def run_command(command): 
     try:
@@ -46,10 +51,6 @@ def run_command(command):
 def open_frontend(): 
     # Django development server URL
     django_url = "http://127.0.0.1:8000/"
-    # chromium_path = "/usr/share/applications/chromium.desktop"
-    # webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(chromium_path), 1 )
-
-
     try:
         webbrowser.get('chromium').open(django_url)
         print("----------")
@@ -64,16 +65,32 @@ if __name__ == "__main__":
     print("SCANNING SYSTEM STARTING")
     print("---------------\n")
 
+    run_command(udevadm_command)
     run_command(django_command)
     time.sleep(1) 
     open_frontend()
     run_command(scanning_command)
 
-
-
     # Wait for all processes to complete
     for process in processes:
+        process.send_signal(signal.SIGINT)
         process.wait()
+
+
+    # attempting to reattach scanner to kernel 
+    
+    '''
+    except KeyboardInterrupt:  # this is out of place but it's the only way I could get the scanner to reattach
+        dev = usb.core.find(idVendor=0x0c2e, idProduct=0x0aaf)
+        if dev is None:
+            raise ValueError('USB device not found')
+
+        dev.reset()
+        dev.attach_kernel_driver(0)
+        print("Reattached USB device to kernel driver")
+    '''
+
+
 
 
     print("All processes have completed.")
