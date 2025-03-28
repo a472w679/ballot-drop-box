@@ -12,16 +12,20 @@ A system that scans, tracks, and stores information of ballot envelopes that are
 ```
 python -m venv .venv 
 ```
-- go into .venv/pyenv.cfg  and set allow global packages to true 
-
-
 2) Activate it 
 3) Install the requirements  
+
 ```
 pip install -r requirements.txt 
 ```
-4) To test and make sure everything is working, Enter the first `dropbox` directory and run `python3 manage.py runserver`
-5) copy the localhost url into your browser 
+
+4) Make migrations 
+```
+python3 dropbox/manage.py makemigrations 
+python3 dropbox/manage.py migrate  
+```
+5) To test and make sure everything is working,  `python3 dropbox/manage.py runserver`
+6) copy the host url into your browser 
 
 ### Scanner Setup 
 This enables more secure use of the interface between the scanner and the system 
@@ -38,26 +42,26 @@ sudo addgroup <myuser> plugdev
 ```
 
 3) Navigate to `/etc/udev/rules.d` and create a file that ends with .rules
+[test.rules]
 ```
-# Scanner 1 - Honeywell Granit 1910i
+# Scanner 1 - Honeywell Granit 1910i ex 
 SUBSYSTEM=="usb", ATTR{idVendor}=="0c2e", ATTR{idProduct}=="0aaf", MODE="0666"
 
-# Scanner 2  - Honeywell Granit 1980
+# Scanner 2  - Honeywell Granit 1980 ex
 SUBSYSTEM=="usb", ATTR{idVendor}=="0c2e", ATTR{idProduct}=="0c61", MODE="0666"
 ```
 For each scanner that exists, add its corresponding correct idVendor and idProduct numbers 
 - Correct idVendor and idProduct numbers for scanners can be found using `lsusb -v`
 - in this case, our first scanner, the honeywell granit 1910i, has idVendor `0c2e` and idProduct `0aaf`
 
-4) Add a new thread in `./dropbox/scanner/scanning.py` for each new scanner! 
-
+4) Add a new thread in `./dropbox/scanner/scanning.py` for each new scanner 
 [./dropbox/scanner/scanning.py]
 ```python
    # In the main function 
-    scanner1_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(EnvelopeScan, 0x0c2e, 0x0aaf,)) 
+    scanner1_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0aaf,)) 
     scanner1_thread.start()
 
-    scanner2_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(EnvelopeScan, 0x0c2e, 0x0c61,)) 
+    scanner2_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0c61,)) 
     scanner2_thread.start()
 
 	
