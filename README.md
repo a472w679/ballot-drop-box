@@ -104,9 +104,38 @@ ln -s `~/.config/autostart/ballot-dropbox-start.desktop`
 ```
 - When the RPi starts up, the start.py script should run. You can start it again using the icon on the desktop.  
 
-#### How do I just run the system manually? 
-1) In one terminal run `python3 manage.py runserver` 
-2) In another terminal run `python3 scanner/insert.py`
+### Live Feed Setup 
+in dropbox/settings.py 
+
+```python
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("ec2-ip", 6379)],  
+        },
+    },
+}
+```
+- change hosts ip to the EC2 server 
+
+in scanner/webstream_sender.py 
+```python
+UDP_IP = "ec2-server-ip"  
+UDP_PORT = 5005
+```
+- change UDP_IP to ec2 server ip  
+
+### How do I run it manually? 
+In one terminal 
+```
+python3 -m daphne dropbox.asgi:application --bind 0.0.0.0 --port 8000
+```
+
+In another start the live feed: 
+```
+python3 manage.py start_udp_receiver 
+```
 
 ## FAQ 
 ### Where is the web app?

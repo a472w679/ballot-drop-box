@@ -11,6 +11,8 @@
 
 import csv
 
+import cv2
+import numpy as np
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
