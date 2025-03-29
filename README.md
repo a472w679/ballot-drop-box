@@ -121,20 +121,14 @@ CHANNEL_LAYERS = {
 
 in scanner/webstream_sender.py 
 ```python
-UDP_IP = "ec2-server-ip"  
+UDP_IP = "server-ip"  
 UDP_PORT = 5005
 ```
 - change UDP_IP to ec2 server ip  
 
 ### How do I run it manually? 
-In one terminal 
 ```
-python3 -m daphne dropbox.asgi:application --bind 0.0.0.0 --port 8000
-```
-
-In another start the live feed: 
-```
-python3 manage.py start_udp_receiver 
+python3 manage.py runserver 0.0.0.0 
 ```
 
 ## FAQ 

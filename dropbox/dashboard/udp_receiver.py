@@ -23,19 +23,20 @@ class UDPVideoReceiver:
             data, addr = self.sock.recvfrom(65536)  # Max UDP packet size
             
             # Convert bytes to numpy array
-            nparr = np.frombuffer(data, np.uint8)
-            frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-            
-            # Convert frame to JPEG and base64
-            _, buffer = cv2.imencode('.jpg', frame)
-            jpg_as_text = base64.b64encode(buffer).decode('utf-8')
+            # nparr = np.frombuffer(data, np.uint8)
+            # frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            #
+            # # Convert frame to JPEG and base64
+            # _, buffer = cv2.imencode('.jpg', frame)
+            # print(data)
+            jpg_base64 = base64.b64encode(data).decode('utf-8')
             
             # Broadcast to WebSocket clients
             async_to_sync(self.channel_layer.group_send)(
                 "video_group",
                 {
                     "type": "video.frame",
-                    "frame": jpg_as_text
+                    "frame": jpg_base64
                 }
             )
 

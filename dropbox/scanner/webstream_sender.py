@@ -8,6 +8,8 @@ UDP_PORT = 5005
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 cap = cv2.VideoCapture(0)  # Or video file
+# cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
+
 
 while True:
     ret, frame = cap.read()

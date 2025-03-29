@@ -24,3 +24,6 @@ class VideoConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'frame': event['frame']
         }))
+
+
+
