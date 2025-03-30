@@ -8,25 +8,34 @@
 # Error and exception condition values or types that can occur, and their meanings: N/A
 # Side effects: 
 # Invariants: N/A
-
-import threading
-import os
-import select
 import sys
+import threading
 from datetime import date
-import time
-import django
-from barcode_usb_scanner import hid2ascii
 
+import django
 import usb.core
 import usb.util
+from barcode_usb_scanner import hid2ascii
+from post_request import send_data
 
-def insert_code39_data(barcode, model): 
-    barcode_res = if_is_valid_code39(barcode) 
-    if barcode_res:
-        if not len(model.objects.all().filter(code39=f"{barcode_res}")):  # check for duplicates 
-            data_to_insert = model(dropboxid="1", date=f"{date.today()}", imb="", code39=f"{barcode_res}",streetaddress="", city="", zipcode="", status="Valid")
-            data_to_insert.save() 
+
+def send_code39_to_server(barcode : str) -> bool: 
+    res = is_valid_code39(barcode) 
+    if res: 
+        data = {
+            "dropboxid" :"1", 
+            "date": f"{date.today()}", 
+            "imb": "", 
+            "code39": f"{res}",
+            "streetaddress": "", 
+            "city": "", 
+            "zipcode": "",  
+            "status": "Valid"
+        }
+
+        return send_data(data)
+    else: 
+        return False 
 
 
 def get_input(): 
@@ -37,7 +46,7 @@ def get_input():
     except KeyboardInterrupt: 
         print("Exiting...")
 
-def if_is_valid_code39(barcode : str) -> bool: 
+def is_valid_code39(barcode : str) -> bool | str: 
     valid_chars = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-. $/+%*")
 
     # Check if the barcode starts and ends with '*'
@@ -59,24 +68,7 @@ def if_is_valid_code39(barcode : str) -> bool:
     return barcode_content
 
 
-def poll_scanner_input(model): 
-    # granit 1980i scanner settings (I should already have this as default though)
-    # 1) turn on code 39 use
-    # 2) enable start and end characters 
-    # 3) Set usb keyboard pc 
-    # 4) Enable presentation mode 
-    while True: 
-        barcode = get_input() 
-            
-        barcode_res = if_is_valid_code39(barcode) 
-        if barcode_res:
-            if not len(model.objects.all().filter(code39=f"{barcode_res}")):  # check for duplicates 
-                data_to_insert = model(dropboxid="1", date=f"{date.today()}", imb="", code39=f"{barcode_res}",streetaddress="", city="", zipcode="", status="Valid")
-                data_to_insert.save() 
-
-
-
-def poll_scanner_input_kernel_detached(model, id_vendor_val : int, id_product_val : int): 
+def poll_scanner_input_kernel_detached(id_vendor_val : int, id_product_val : int): 
     '''
     Contains modified code from the vpatron/barcode_scanner_python repo which defends against the case where a would be attacker can't just enter things in
     '''
@@ -135,45 +127,22 @@ def poll_scanner_input_kernel_detached(model, id_vendor_val : int, id_product_va
             if len(line) > 0:
                 data = line.strip()
                 print("Scanner: ", data)
-                insert_code39_data(data, model)
+                send_code39_to_server(data) 
                 line = ''
 
 def main(): 
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # dropbox/
-    sys.path.append(base_dir)
-
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dropbox.settings")
-    django.setup()
-
-    from dashboard.models import EnvelopeScan
-
-    scanner1_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(EnvelopeScan, 0x0c2e, 0x0aaf,)) 
+    scanner1_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0aaf,)) 
     scanner1_thread.start()
 
-    scanner2_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(EnvelopeScan, 0x0c2e, 0x0c61,)) 
-    scanner2_thread.start()
+    # scanner2_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0c61,)) 
+    # scanner2_thread.start()
 
     # Join the threads 
     scanner1_thread.join()
-    scanner2_thread.join()
+    # scanner2_thread.join()
 
-    # poll_scanner_input_kernel_detached(EnvelopeScan, 0x0c2e, 0x0aaf)
-
-    # poll_scanner_input(EnvelopeScan) 
-    # print(len(EnvelopeScan.objects.all().filter(code39="test"))) 
-    # EnvelopeScan.objects.all().delete() # clearing the query set 
 
 
 
 if __name__ == '__main__':
     main()
-    # Add the parent directory of `dropbox` to Python's path
-
-    # this commented code inserts debug test data into the database
-    # imbdata = imb(dropboxid="1", date='Feb 14', imb="12345678901234567890", code39="012345678",streetaddress='711 W 23rd St', city="Lawrence", zipcode="66046", status="Invalid Entry")
-    # imbdata.save()
-    # printing out that data 
-    # for test in imb.objects.all():
-    #     print(test.date, test.streetaddress, test.city, test.zipcode, test.status)
-    # imb.objects.all().delete() # clearing the query set 
-

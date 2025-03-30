@@ -11,11 +11,18 @@
 
 import csv
 
+import cv2
+import numpy as np
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
+from rest_framework import status
+# rest-api
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from .models import EnvelopeScan
+from .serializers import EnvelopeSerializer
 
 # Create your views here.
 
@@ -46,5 +53,16 @@ def export(request, dropbox_id):  # downloads database in a csv
 
     return response 
 
+@api_view(['POST'])
+def receive_sensor_data(request):
+    serializer = EnvelopeSerializer(data=request.data)
+    if serializer.is_valid(): # makes sure post request is valid 
+        serializer.save() # inserts data 
+        res = Response(serializer.data, status=status.HTTP_201_CREATED)  
+
+        return res
+
+    res = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return res
 
 

@@ -20,17 +20,6 @@
       <!-- Sidebar -->
       <div class="w-1/4 bg-white p-6 rounded-lg shadow-lg mr-6">
 
-        <!--  Date Range Filter -->         
-        <!-- <div class="mb-6"> -->
-        <!--   <label for="dateRange" class="block text-gray-700">Date Range:</label> -->
-        <!--   <input -->
-        <!--     type="text" -->
-        <!--     id="dateRange" -->
-        <!--     class="mt-1 p-2 border rounded w-full" -->
-        <!--     value="Feb 09 - Feb 12" -->
-        <!--   /> -->
-        <!-- </div> -->
-
         <!-- Drop Box Tabs -->
         <h2 class="text-xl font-semibold text-gray-800 mb-4">Drop Boxes</h2>
         <ul>
@@ -66,32 +55,31 @@
         <h1 class="text-2xl font-bold text-blue-600 mb-6">Dropbox #{{dropbox_id}} Dashboard</h1>
 
         <!-- Table for Drop Box #1 -->
-        <div id="box1" class="table-container">
+        <div id="box1" class="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table
-            id="dataTable"
-            class="min-w-full bg-white border border-gray-300"
+            class="min-w-full text-xs text-black-700 uppercase bg-gray-50 dark:bg-white-700 dark:text-black-400"
           >
             <thead>
-              <tr>
-                <th class="py-2 px-1 border-b">Date</th>
-                <th class="py-2 px-1 border-b">Code 39</th>
-                <th class="py-2 px-1 border-b">IMb</th>
-                <th class="py-2 px-1 border-b">Street Address</th>
-                <th class="py-2 px-1 border-b">City</th>
-                <th class="py-2 px-1 border-b">ZIP Code</th>
-                <th class="py-2 px-1 border-b">Other (status, etc.)</th>
+              <tr class="border-b">
+                <th scope="col" class="py-6 px-4">Date</th>
+                <th scope="col" class="py-6 px-4">Code 39</th>
+                <th scope="col" class="py-6 px-4">IMb</th>
+                <th scope="col" class="py-6 px-4">Street Address</th>
+                <th scope="col" class="py-6 px-4">City</th>
+                <th scope="col" class="py-6 px-4">ZIP Code</th>
+                <th scope="col" class="py-6 px-4">Other (status, etc.)</th>
               </tr>
             </thead>
             {% for data in envelope_data %}
             <tbody>
-              <tr>
-                <td class="py-1 px-9 border-b">{{data.date}}</td>
-                <td class="py-1 px-9 border-b">{{data.code39}}</td>
-                <td class="py-1 px-9 border-b">{{data.imb}}</td>
-                <td class="py-1 px-9 border-b">{{data.streetaddress}}</td>
-                <td class="py-1 px-9 border-b">{{data.city}}</td>
-                <td class="py-1 px-9 border-b">{{data.zipcode}}</td>
-                <td class="py-1 px-9 border-b">{{data.status}}</td>
+            <tr class="odd:bg-white  even:bg-gray  border-b  border-gray-200">
+                <th scope="row" class="py-6 px-4  text-center align-middle">{{data.date}}</th>
+                <td   class="py-6 px-4 text-center align-middle">{{data.code39}}</td>
+                <td   class="py-6 px-4 text-center align-middle">{{data.imb}}</td>
+                <td   class="py-6 px-4 text-center align-middle">{{data.streetaddress}}</td>
+                <td   class="py-6 px-4 text-center align-middle">{{data.city}}</td>
+                <td   class="py-6 px-4 text-center align-middle">{{data.zipcode}}</td>
+                <td   class="py-6 px-4 text-center align-middle">{{data.status}}</td>
               </tr>
             </tbody>
             {% endfor %}
@@ -107,13 +95,28 @@
         </button>
         </form>
 
-     <div class="mt-8">
-          <h2 class="text-xl font-semibold text-gray-800 mb-2">Dropbox Live Feed</h2>
-          <video id="livefeed" autoplay playsinline class="w-[720px] h-[480px] ">
-
-        </div>
+<figure class="max-w-lg mt-5">
+  <img id="video" class="h-auto max-w-full rounded-lg" src="" alt="image description">
+  <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Live Feed</figcaption>
+</figure>
       </div>
     </div>
 
-    <script src="{% static 'js/live_feed.js' %}"></script>
+    
+
+    <script>
+        const videoSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/video/{{dropbox_id}}'
+        );
+
+        const videoElement = document.getElementById('video');
+
+        videoSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+
+            if ({{dropbox_id}} === data.sender_id) {
+                videoElement.src = 'data:image/jpg;base64,' + data.frame;
+            }  
+        };
+    </script>
     {% endblock %}

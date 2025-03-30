@@ -12,16 +12,20 @@ A system that scans, tracks, and stores information of ballot envelopes that are
 ```
 python -m venv .venv 
 ```
-- go into .venv/pyenv.cfg  and set allow global packages to true 
-
-
 2) Activate it 
 3) Install the requirements  
+
 ```
 pip install -r requirements.txt 
 ```
-4) To test and make sure everything is working, Enter the first `dropbox` directory and run `python3 manage.py runserver`
-5) copy the localhost url into your browser 
+
+4) Make migrations 
+```
+python3 dropbox/manage.py makemigrations 
+python3 dropbox/manage.py migrate  
+```
+5) To test and make sure everything is working,  `python3 dropbox/manage.py runserver`
+6) copy the host url into your browser 
 
 ### Scanner Setup 
 This enables more secure use of the interface between the scanner and the system 
@@ -38,26 +42,26 @@ sudo addgroup <myuser> plugdev
 ```
 
 3) Navigate to `/etc/udev/rules.d` and create a file that ends with .rules
+[test.rules]
 ```
-# Scanner 1 - Honeywell Granit 1910i
+# Scanner 1 - Honeywell Granit 1910i ex 
 SUBSYSTEM=="usb", ATTR{idVendor}=="0c2e", ATTR{idProduct}=="0aaf", MODE="0666"
 
-# Scanner 2  - Honeywell Granit 1980
+# Scanner 2  - Honeywell Granit 1980 ex
 SUBSYSTEM=="usb", ATTR{idVendor}=="0c2e", ATTR{idProduct}=="0c61", MODE="0666"
 ```
 For each scanner that exists, add its corresponding correct idVendor and idProduct numbers 
 - Correct idVendor and idProduct numbers for scanners can be found using `lsusb -v`
 - in this case, our first scanner, the honeywell granit 1910i, has idVendor `0c2e` and idProduct `0aaf`
 
-4) Add a new thread in `./dropbox/scanner/scanning.py` for each new scanner! 
-
+4) Add a new thread in `./dropbox/scanner/scanning.py` for each new scanner 
 [./dropbox/scanner/scanning.py]
 ```python
    # In the main function 
-    scanner1_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(EnvelopeScan, 0x0c2e, 0x0aaf,)) 
+    scanner1_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0aaf,)) 
     scanner1_thread.start()
 
-    scanner2_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(EnvelopeScan, 0x0c2e, 0x0c61,)) 
+    scanner2_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0c61,)) 
     scanner2_thread.start()
 
 	
@@ -100,9 +104,51 @@ ln -s `~/.config/autostart/ballot-dropbox-start.desktop`
 ```
 - When the RPi starts up, the start.py script should run. You can start it again using the icon on the desktop.  
 
-#### How do I just run the system manually? 
-1) In one terminal run `python3 manage.py runserver` 
-2) In another terminal run `python3 scanner/insert.py`
+### Live Feed Setup 
+in dropbox/settings.py 
+
+```python
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("ec2-ip", 6379)],  
+        },
+    },
+}
+```
+- change hosts ip to the EC2 server 
+
+in scanner/webstream_sender.py 
+```python
+UDP_IP = "server-ip"  
+UDP_PORT = 5005
+```
+- change UDP_IP to ec2 server ip  
+
+### How do I run it manually? 
+```
+python3 manage.py runserver 0.0.0.0 
+```
+
+### AWS Setup 
+
+Make sure redis is running 
+```
+redis-cli ping 
+> PONG 
+```
+- install and enable using systemctl if it isn't 
+
+#### Security Groups 
+Django server 
+- CUSTOM TCP port range 8000
+
+Redis Server 
+- CUSTOM TCP port range 6379
+
+Incoming Live Feed
+- CUSTOM TCP port range 5005 
 
 ## FAQ 
 ### Where is the web app?
