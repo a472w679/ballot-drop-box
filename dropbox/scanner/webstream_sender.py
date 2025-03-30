@@ -5,6 +5,7 @@ import numpy as np
 
 UDP_IP = "127.0.0.1"  # Replace with Django server IP
 UDP_PORT = 5005
+DROPBOX_ID = 2
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 cap = cv2.VideoCapture(0)  # Or video file
@@ -23,6 +24,6 @@ while True:
     _, jpeg_data = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
 
     # Convert to bytes and send
-    sock.sendto(jpeg_data.tobytes(), (UDP_IP, UDP_PORT))
+    sock.sendto(DROPBOX_ID.to_bytes() + b'|' + jpeg_data.tobytes(), (UDP_IP, UDP_PORT))
 
 cap.release()

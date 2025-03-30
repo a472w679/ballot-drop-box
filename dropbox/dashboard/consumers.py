@@ -18,11 +18,14 @@ class VideoConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard("video_group", self.channel_name)
 
     async def receive(self, text_data):
+        await save_frame(self.sender_id, bytes_data)  # Save per sender
+
         pass  # Not needed for this use case
 
     async def video_frame(self, event):
         await self.send(text_data=json.dumps({
-            'frame': event['frame']
+            'frame': event['frame'],
+            'sender_id': event['sender_id']
         }))
 
 

@@ -95,12 +95,10 @@
         </button>
         </form>
 
-         <div class="mt-8">
-              <!-- <h2 class="text-xl font-semibold text-gray-800 mb-2">Dropbox Live Feed</h2> -->
-              <!-- <video id="livefeed" autoplay playsinline class="w-[720px] h-[480px] "> -->
-              <!-- <video id="video" autoplay playsinline muted></video> -->
-            <img id="video" width="640" height="480">
-        </div>
+<figure class="max-w-lg mt-5">
+  <img id="video" class="h-auto max-w-full rounded-lg" src="" alt="image description">
+  <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Live Feed</figcaption>
+</figure>
       </div>
     </div>
 
@@ -108,15 +106,18 @@
 
     <script>
         const videoSocket = new WebSocket(
-            'ws://' + window.location.host + '/ws/video/'
+            'ws://' + window.location.host + '/ws/video/{{dropbox_id}}'
         );
 
         const videoElement = document.getElementById('video');
 
         videoSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            console.log(data)
-            videoElement.src = 'data:image/bmp;base64,' + data.frame;
+
+            if ({{dropbox_id}} === data.sender_id) {
+                console.log(data);
+                videoElement.src = 'data:image/jpg;base64,' + data.frame;
+            } 
         };
     </script>
     {% endblock %}
