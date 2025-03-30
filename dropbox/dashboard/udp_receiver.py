@@ -1,6 +1,7 @@
 # your_app/udp_receiver.py
 import base64
 import socket
+import struct
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -14,14 +15,47 @@ class UDPVideoReceiver:
         self.sock.bind((self.udp_ip, self.udp_port))
         self.channel_layer = get_channel_layer()
 
+
+
     def start_receiving(self):
         print(f"UDP receiver started on port {self.udp_port}")
+        MIN_PACKET_SIZE = 8 
         while True:
             data, addr = self.sock.recvfrom(65536)  # Max UDP packet size
+
+            # Check if packet is too small
+            if len(data) < MIN_PACKET_SIZE:
+                # print(f"Packet too small: {len(data)} bytes")
+                continue 
             
-            sender_id, jpeg_bytes = data.split(b'|', 1)  # Split at first '|'
+            # Verify that there enough data for the claimed JPEG size
+            try:
+                sender_id = struct.unpack('!I', data[:4])[0]
+                jpeg_size = struct.unpack('!I', data[4:8])[0]
+            except struct.error:
+                continue 
+                
+            # 3. Check if jpeg_size is reasonable
+            if jpeg_size > 10 * 1024 * 1024:  # 10MB max
+                continue 
+                
+            #  Verify complete JPEG data was received
+            if len(data) < 8 + jpeg_size:
+                # print(f"Incomplete JPEG data. Expected {8+jpeg_size}, got {len(data)}")
+                continue 
+                
+            # Extract and validate JPEG data
+            jpeg_bytes = data[8:8+jpeg_size]
+            
+            # Verify JPEG header (starts with 0xFFD8)
+            if len(jpeg_bytes) < 2 or jpeg_bytes[0] != 0xFF or jpeg_bytes[1] != 0xD8:
+                # print("Incorrect JPEG format")
+                continue 
+
+
+            # encode jpg data to b64 
             jpg_base64 = base64.b64encode(jpeg_bytes).decode('utf-8')
-            sender_id_int = int.from_bytes(sender_id)
+
             
             # Broadcast to WebSocket clients
             async_to_sync(self.channel_layer.group_send)(
@@ -29,7 +63,7 @@ class UDPVideoReceiver:
                 {
                     "type": "video.frame",
                     "frame": jpg_base64,
-                    "sender_id": sender_id_int
+                    "sender_id": sender_id
                 }
             )
 

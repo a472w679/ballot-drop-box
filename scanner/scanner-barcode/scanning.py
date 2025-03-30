@@ -8,18 +8,33 @@
 # Error and exception condition values or types that can occur, and their meanings: N/A
 # Side effects: 
 # Invariants: N/A
+import os.path
 import sys
 import threading
 from datetime import date
 
-import django
 import usb.core
 import usb.util
+import yaml
 from barcode_usb_scanner import hid2ascii
+
+# importing post_request from above 
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+sys.path.append(parent_dir)
 from post_request import send_data
 
 
 def send_code39_to_server(barcode : str) -> bool: 
+    '''
+    Sends post request to django server api endpoing containing code39 barcode
+
+    Args: 
+        barcode (str): the code39 string
+
+    Returns: 
+        bool: true if post request  
+    '''
+
     res = is_valid_code39(barcode) 
     if res: 
         data = {
@@ -38,15 +53,23 @@ def send_code39_to_server(barcode : str) -> bool:
         return False 
 
 
-def get_input(): 
-    try: 
-        while True: 
-            scanned_data = sys.stdin.readline().strip()
-            return scanned_data
-    except KeyboardInterrupt: 
-        print("Exiting...")
 
 def is_valid_code39(barcode : str) -> bool | str: 
+    '''
+    Checks if barcode str is valid code 39
+
+    Args: 
+        barcode (str): the code39 string
+
+    Returns: 
+        bool: false if code 39 was not valid  
+        str:  code39 string without start and end * characters if barcode was valid 
+
+    Example: 
+        *ABC-123* 
+        >>> ABC-123
+    '''
+
     valid_chars = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-. $/+%*")
 
     # Check if the barcode starts and ends with '*'
@@ -70,7 +93,14 @@ def is_valid_code39(barcode : str) -> bool | str:
 
 def poll_scanner_input_kernel_detached(id_vendor_val : int, id_product_val : int): 
     '''
-    Contains modified code from the vpatron/barcode_scanner_python repo which defends against the case where a would be attacker can't just enter things in
+    Detaches scanner from kernel and reads directly from USB endpoint 
+
+    Args: 
+        id_vendor_val (int): the id vendor of the scanner 
+        id_product_val (int): the id product of the scanner 
+
+    Returns: 
+        None 
     '''
 
     # Find our device using the VID (Vendor ID) and PID (Product ID)
@@ -131,16 +161,40 @@ def poll_scanner_input_kernel_detached(id_vendor_val : int, id_product_val : int
                 line = ''
 
 def main(): 
-    scanner1_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0aaf,)) 
-    scanner1_thread.start()
+    with open(os.path.join(parent_dir, "config.yaml"), 'r') as file:
+        config = yaml.safe_load(file)
 
-    # scanner2_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0c61,)) 
-    # scanner2_thread.start()
+    threads = []
 
-    # Join the threads 
-    scanner1_thread.join()
-    # scanner2_thread.join()
+    try:
+        for scanner, idvals in config["scanners"].items(): 
+            vendor_id = idvals["vendor_id"]
+            product_id = idvals["product_id"]
 
+            scanner_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(vendor_id, product_id,)) 
+            threads.append(scanner_thread)
+    except KeyError: 
+        raise Exception("Invalid scanner configuration")
+
+    for thread in threads: 
+        thread.start()
+
+    for thread in threads: 
+        thread.join()
+
+
+
+
+
+        # scanner1_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0aaf,)) 
+        # scanner1_thread.start()
+
+        # scanner2_thread = threading.Thread(target=poll_scanner_input_kernel_detached,  daemon=True, args=(0x0c2e, 0x0c61,)) 
+        # scanner2_thread.start()
+
+        # Join the threads 
+        # scanner1_thread.join()
+        # scanner2_thread.join()
 
 
 

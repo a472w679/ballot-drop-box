@@ -17,26 +17,23 @@ import os
 import signal
 import subprocess
 import time
-import webbrowser
-
-# TODO: NEED TO TEST ON RASPBERRY PI 
-terminal_type = "" 
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 # Path to the virtual environment's activate script
-venv_activate_path = os.path.join(script_dir, "..", ".venv", "bin", "activate")  
+venv_activate_path = os.path.join(script_dir, "..",  ".venv", "bin", "activate")  
+
+# initializes udev rules 
 udevadm_command = "sudo udevadm control --reload && sudo udevadm trigger"
 
-django_path = os.path.join(script_dir, "manage.py")
-django_command = f". {venv_activate_path} && {terminal_type} python3 {django_path} runserver"  
+scanning_path = os.path.join(script_dir, "scanner-barcode/scanning.py")
+scanning_command = f". {venv_activate_path} &&  python3 {scanning_path}"  
 
-scanning_path = os.path.join(script_dir, "scanner/scanning.py")
-scanning_command = f". {venv_activate_path} && {terminal_type} python3 {scanning_path}"  
+webstream_sender_path = os.path.join(script_dir, "live-feed/webstream_sender.py")
+webstream_sender_command = f". {venv_activate_path} &&  python3 {webstream_sender_path}"  
 
 # List to hold the process objects
 processes = []
-
 
 def run_command(command): 
     try:
@@ -47,17 +44,6 @@ def run_command(command):
     except Exception as e:
         print(f"Failed to start {command}: {e}\n")
 
-def open_frontend(): 
-    # Django development server URL
-    django_url = "http://127.0.0.1:8000/"
-    try:
-        webbrowser.get('chromium').open(django_url)
-        print("----------")
-        print(f"OPENING FRONT END AT {django_url}")
-        print("----------\n")
-    except Exception as e:
-        print(f"Failed to open {django_url} in the browser: {e}")
-
 
 if __name__ == "__main__": 
     print("---------------")
@@ -65,10 +51,9 @@ if __name__ == "__main__":
     print("---------------\n")
 
     run_command(udevadm_command)
-    run_command(django_command)
     time.sleep(1) 
-    open_frontend()
     run_command(scanning_command)
+    run_command(webstream_sender_command)
 
     # Wait for all processes to complete
     for process in processes:
@@ -88,8 +73,5 @@ if __name__ == "__main__":
         dev.attach_kernel_driver(0)
         print("Reattached USB device to kernel driver")
     '''
-
-
-
 
     print("All processes have completed.")

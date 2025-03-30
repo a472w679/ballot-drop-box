@@ -1,0 +1,21 @@
+prod: false 
+
+server: 
+  host: "127.0.0.1"
+  port: 8000
+  live_feed_port: 5005
+
+dropbox: 
+  id: 3 
+  address: ""
+
+scanners:  
+  scanner1: 
+    vendor_id: 0x0c2e
+    product_id: 0x0aaf
+  # scanner2: 
+  #   vendor_id: 0x0c2e
+  #   product_id: 0x0aaf
+
+
+
