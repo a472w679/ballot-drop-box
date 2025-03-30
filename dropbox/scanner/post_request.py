@@ -13,7 +13,7 @@ from datetime import date
 import requests
 
 # DEBUG URL 
-DEBUG_URL = "http://13.59.39.53:8000/api/scandata"
+DEBUG_URL = "http://127.0.0.1:8000/api/scandata"
 
 # For production, use HTTPS:
 # EC2_URL = "https://your-domain.com/api/sensor-data/"

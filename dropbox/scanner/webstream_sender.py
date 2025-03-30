@@ -3,7 +3,7 @@ import socket
 import cv2
 import numpy as np
 
-UDP_IP = "13.59.39.53"  # Django server IP
+UDP_IP = "127.0.0.1"  # Django server IP
 UDP_PORT = 5005
 DROPBOX_ID = 2 # The dropbox id tab you want to send live feed to 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
