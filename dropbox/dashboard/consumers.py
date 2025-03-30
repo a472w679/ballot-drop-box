@@ -2,7 +2,6 @@
 import base64
 import json
 
-import cv2
 import numpy as np
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer
