@@ -8,53 +8,35 @@
 # Error and exception condition values or types that can occur, and their meanings: N/A 
 # Side effects: N/A 
 # Invariants: N/A 
+import os
 from datetime import date
 
 import requests
+import yaml
 
-# DEBUG URL 
-DEBUG_URL = "http://127.0.0.1:8000/api/scandata"
-
-# For production, use HTTPS:
-# EC2_URL = "https://your-domain.com/api/sensor-data/"
-
-# sensor_data_example = {
-#     "dropboxid" :"1", 
-#     "date": f"{date.today()}", 
-#     "imb": "", 
-#     "code39": f"{1001}",
-#     "streetaddress": "", 
-#     "city": "", 
-#     "zipcode": "",  
-#     "status": "Valid"
-# }
+with open(os.path.join(os.path.dirname(__file__), "config.yaml"), 'r') as file:
+    config = yaml.safe_load(file)
 
 def send_data(data : dict) -> bool:
     '''
     Sends JSON data to a predefined API endpoint via HTTP POST request.
 
-    This function attempts to send the provided data to a debug URL endpoint. 
-    It handles the request/response cycle and provides feedback about the operation's success.
-
     Args:
         data (dict): A dictionary containing the data to be sent as JSON in the request body.
-                     The dictionary should be JSON-serializable.
 
     Returns:
         bool: True if the request was successful (HTTP status code 2xx), False otherwise.
-              Note: Only indicates successful delivery, not necessarily server-side processing.
-
-
-    Example:
-        >>> result = send_data({'barcode': 'ABC123', 'status': 'processed'})
-        Status Code: 200
-        Response: {"success": true, "message": "Data received"}
-        >>> print(result)
-        True
     '''
+
+    server_config = config['server']
+    if not config["prod"]: 
+        API_ENDPOINT = f"http://{server_config['host']}:{server_config['port']}/api/scandata"
+    else: 
+        API_ENDPOINT = f"https://{server_config['host']}/api/scandata"
+
     try:
         response = requests.post(
-            DEBUG_URL,
+            API_ENDPOINT,
             json=data,
             headers={'Content-Type': 'application/json'}
         )
@@ -65,5 +47,4 @@ def send_data(data : dict) -> bool:
     except Exception as e:
         print(f"Error sending data: {e}")
         return False
-
 

@@ -10,15 +10,23 @@
 // Invariants: N/A
 
 document.addEventListener("DOMContentLoaded", function () {
-  async function startWebcam() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 1280, height: 720 }, // Request 720p resolution
-      });
-      document.getElementById("livefeed").srcObject = stream;
-    } catch (error) {
-      console.error("Error accessing webcam:", error);
-    }
+  async function startStream() {
+    const videoElement = document.getElementById("video");
+    const dropbox_id = parseInt(videoElement.dataset.dropboxId, 10);
+
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws/video/${dropbox_id}`;
+
+    const videoSocket = new WebSocket(wsUrl);
+
+    videoSocket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+
+      if (dropbox_id === data.sender_id) {
+        videoElement.src = "data:image/jpg;base64," + data.frame;
+      }
+    };
   }
-  startWebcam();
+
+  startStream();
 });

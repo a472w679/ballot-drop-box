@@ -96,27 +96,13 @@
         </form>
 
 <figure class="max-w-lg mt-5">
-  <img id="video" class="h-auto max-w-full rounded-lg" src="" alt="image description">
+    <img id="video" data-dropbox-id="{{dropbox_id}}" class="h-auto max-w-full rounded-lg" src="{% static 'images/stream_unavailable.png' %}" alt="image description">
   <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Live Feed</figcaption>
 </figure>
       </div>
     </div>
 
     
+    <script src="{% static 'js/live_feed.js' %}" type="text/javascript"></script>
 
-    <script>
-        const videoSocket = new WebSocket(
-            'ws://' + window.location.host + '/ws/video/{{dropbox_id}}'
-        );
-
-        const videoElement = document.getElementById('video');
-
-        videoSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-
-            if ({{dropbox_id}} === data.sender_id) {
-                videoElement.src = 'data:image/jpg;base64,' + data.frame;
-            }  
-        };
-    </script>
     {% endblock %}
