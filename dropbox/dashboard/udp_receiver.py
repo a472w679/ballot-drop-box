@@ -20,13 +20,6 @@ class UDPVideoReceiver:
             data, addr = self.sock.recvfrom(65536)  # Max UDP packet size
             
             sender_id, jpeg_bytes = data.split(b'|', 1)  # Split at first '|'
-            # Convert bytes to numpy array
-            # nparr = np.frombuffer(data, np.uint8)
-            # frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-            #
-            # # Convert frame to JPEG and base64
-            # _, buffer = cv2.imencode('.jpg', frame)
-            # print(data)
             jpg_base64 = base64.b64encode(jpeg_bytes).decode('utf-8')
             sender_id_int = int.from_bytes(sender_id)
             
@@ -40,7 +33,11 @@ class UDPVideoReceiver:
                 }
             )
 
+        self.sock.shutdown(socket.SHUT_RDWR)  # Signal that we're done sending and receiving
+        self.sock.close()  # Close the socket
+
 # To start in Django
 def start_udp_receiver():
     receiver = UDPVideoReceiver()
     receiver.start_receiving()
+
