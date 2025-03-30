@@ -131,6 +131,25 @@ UDP_PORT = 5005
 python3 manage.py runserver 0.0.0.0 
 ```
 
+### AWS Setup 
+
+Make sure redis is running 
+```
+redis-cli ping 
+> PONG 
+```
+- install and enable using systemctl if it isn't 
+
+#### Security Groups 
+Django server 
+- CUSTOM TCP port range 8000
+
+Redis Server 
+- CUSTOM TCP port range 6379
+
+Incoming Live Feed
+- CUSTOM TCP port range 5005 
+
 ## FAQ 
 ### Where is the web app?
 `./dropbox/dashboard`
