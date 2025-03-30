@@ -28,7 +28,7 @@ python3 dropbox/manage.py migrate
 5) To test and make sure everything is working,  `python3 dropbox/manage.py runserver 0.0.0.0:8000`
 6) copy the host url into your browser 
 
-### Scanner Setup (Raspberry Pi)
+### Industrial USB Scanner Setup (Raspberry Pi)
 This enables more secure use of the interface between the scanner and the raspberry pi 
 
 1) Install pyusb  and libusb 
@@ -57,7 +57,7 @@ For each scanner that exists, add its corresponding correct idVendor and idProdu
 
 More information: https://github.com/vpatron/barcode_scanner_python 
 
-### Scanner Config
+### Config (Raspberry Pi)
 [`scanner/config.yaml`]
 
 #### prod
@@ -141,16 +141,32 @@ ln -s `~/.config/autostart/ballot-dropbox-start.desktop`
 python3 dropbox/manage.py runserver 0.0.0.0:8000
 ```
 
-### AWS Setup 
-- Install necessary tools like git
-- Clone this repository 
+### AWS EC2 Setup 
+1) Install necessary tools like git
+2) Clone this repository 
+3) Install and enable redis
+```
+sudo systemctl enable redis # starts at boot 
+sudo systemctl start redis    
+sudo systemctl restart redis  
+```
 
--Make sure redis is running 
+Make sure redis is running 
 ```
 redis-cli ping 
 > PONG 
 ```
-- install and enable using systemctl if it isn't 
+
+4) Make migrations  
+```
+python3 dropbox/manage.py makemigrations 
+python3 dropbox/manage.py migrate  
+```
+
+5) Start server 
+```
+nohup python3 dropbox/manage.py runserver 0.0.0.0:8000 > django.log 2>&1 &
+```
 
 #### Add Security Groups 
 Django server 
@@ -162,6 +178,8 @@ Redis Server
 Incoming Live Feed
 - CUSTOM TCP port range 5005 
 
+CIDR: 0.0.0.0/0
+
 ## FAQ 
 ### Where is the web app?
 `./dropbox/dashboard`
@@ -172,7 +190,7 @@ Html stuff is in `./dropbox/dashboard/templates`
 `./dropbox/dashboard/models.py`
 
 ### Where is the rasberry pi/barcode scanning code?
-`./dropbox/scanner/`
+`./scanner/`
 
 ## Credits  
 https://github.com/vpatron/barcode_scanner_python

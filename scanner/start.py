@@ -21,7 +21,7 @@ import time
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 # Path to the virtual environment's activate script
-venv_activate_path = os.path.join(script_dir, "..", "..", ".venv", "bin", "activate")  
+venv_activate_path = os.path.join(script_dir, "..",  ".venv", "bin", "activate")  
 
 # initializes udev rules 
 udevadm_command = "sudo udevadm control --reload && sudo udevadm trigger"
