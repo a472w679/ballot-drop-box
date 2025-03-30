@@ -105,30 +105,18 @@ ln -s `~/.config/autostart/ballot-dropbox-start.desktop`
 - When the RPi starts up, the start.py script should run. You can start it again using the icon on the desktop.  
 
 ### Live Feed Setup 
-in dropbox/settings.py 
-
-```python
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("ec2-ip", 6379)],  
-        },
-    },
-}
-```
-- change hosts ip to the EC2 server 
-
 in scanner/webstream_sender.py 
 ```python
 UDP_IP = "server-ip"  
 UDP_PORT = 5005
+DROPBOX_ID = 1 
 ```
 - change UDP_IP to ec2 server ip  
+- change DROPBOX_ID to the tab you want to send to 
 
 ### How do I run it manually? 
 ```
-python3 manage.py runserver 0.0.0.0 
+python3 manage.py runserver 0.0.0.0:8000
 ```
 
 ### AWS Setup 
