@@ -125,7 +125,7 @@ Comment=Start the ballot drop box system
 Terminal=true
 Type=Application
 Categories=Utility;Application;
-Exec=lxterminal -e "python3 /home/xruyle/dev/ballot-drop-box/dropbox/start.py"
+Exec=lxterminal -e "python3 /home/xruyle/dev/ballot-drop-box/scanner/start.py"
 ```
 
 3) Now you can create a symlink to the .desktop file on the Desktop 
