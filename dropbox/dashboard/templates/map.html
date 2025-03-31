@@ -1,0 +1,125 @@
+<!-- // Name of code artifact: dropbox.html -->
+<!-- // Brief description of what the code does: dropbox template for the front end -->
+<!-- // Programmer’s name: Xavier Ruyle -->
+<!-- // Date the code was created: 2/20/25 -->
+<!-- // Preconditions: database available, base.html -->
+<!-- // Postconditions: N/A -->
+<!-- // Return values or types, and their meanings: N/A -->
+<!-- // Error and exception condition values or types that can occur, and their meanings: N/A -->
+<!-- // Side effects: -->
+<!-- // Invariants: N/A -->
+
+{% extends 'base.html' %} {% load static %} {% block title %} Map {% endblock %}
+{% block head %}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+
+{% endblock %} {% block content %}
+
+<style>
+  .leaflet-attribution-flag {
+    display: none !important;
+  }
+
+  .hs-leaflet.leaflet-touch .leaflet-control-layers,
+  .hs-leaflet.leaflet-touch .leaflet-bar {
+    border-width: 0px;
+  }
+
+  .hs-leaflet.leaflet-touch .leaflet-bar a {
+    line-height: 1.5;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+
+  .hs-leaflet.leaflet-touch .leaflet-bar a:first-child,
+  .hs-leaflet.leaflet-touch .leaflet-bar a:last-child {
+    border-radius: 8px;
+  }
+
+  .hs-leaflet .leaflet-control-zoom-in,
+  .hs-leaflet .leaflet-control-zoom-out {
+    font-weight: 400;
+    font-size: 18px;
+    color: #1f2937;
+    text-indent: 0px;
+  }
+
+  .hs-leaflet .leaflet-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .hs-leaflet .leaflet-bar a {
+    border-width: 0;
+  }
+
+  .hs-leaflet .leaflet-bar a:hover,
+  .hs-leaflet .leaflet-bar a:focus {
+    background-color: #e5e7eb;
+  }
+
+  .hs-leaflet .leaflet-popup-content-wrapper,
+  .hs-leaflet .leaflet-popup-tip {
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .hs-leaflet .leaflet-popup-tip {
+    border-radius: 4px;
+  }
+
+  .hs-leaflet.leaflet-container a.leaflet-popup-close-button {
+    top: -10px;
+    right: -10px;
+    border-radius: 9999px;
+    background-color: #f3f4f6;
+    color: #1f2937;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .hs-leaflet.leaflet-container a.leaflet-popup-close-button:hover {
+    background-color: #f3f4f6;
+  }
+
+  .hs-leaflet-unstyled-popover .leaflet-popup-content-wrapper {
+    display: flex;
+  }
+
+  .hs-leaflet-unstyled-popover .leaflet-popup-content {
+    padding: 0;
+    margin: 0;
+    background: none;
+    line-height: normal;
+    border-radius: 0;
+    font-size: inherit;
+    min-height: auto;
+  }
+
+  #map {
+    border-width: 2px;
+    color: gray;
+    border-radius: 1px;
+  }
+</style>
+
+<div class="map-container flex justify-center">
+  <div id="map" class="hs-leaflet h-[500px] w-[600px]"></div>
+</div>
+
+<script type="text/javascript" src="{% static 'js/map_leaflet.js' %}"></script>
+{% endblock %}

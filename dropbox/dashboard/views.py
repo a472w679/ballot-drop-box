@@ -27,9 +27,14 @@ from .serializers import EnvelopeSerializer
 
 def home(request):
   template = loader.get_template('home.html')
-  context = {
-  }
+  context = {}
   return HttpResponse(template.render(context, request))
+
+def map(request):
+  template = loader.get_template('map.html')
+  context = {}
+  return HttpResponse(template.render(context, request))
+
 
 def dashboard(request, dropbox_id):
   envelope_data = EnvelopeScan.objects.all().filter(dropboxid=dropbox_id).values()

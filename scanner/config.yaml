@@ -1,7 +1,7 @@
 prod: false 
 
 server: 
-  host: "127.0.0.1"
+  host: "13.59.39.53"
   port: 8000
   live_feed_port: 5005
 
