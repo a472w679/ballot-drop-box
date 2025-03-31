@@ -51,13 +51,12 @@ if __name__ == "__main__":
     print("---------------\n")
 
     run_command(udevadm_command)
-    time.sleep(1) 
     run_command(scanning_command)
     run_command(webstream_sender_command)
 
     # Wait for all processes to complete
     for process in processes:
-        process.send_signal(signal.SIGINT)
+        # process.send_signal(signal.SIGINT)
         process.wait()
 
 

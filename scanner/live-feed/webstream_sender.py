@@ -36,6 +36,7 @@ def send_jpeg_stream_data():
         packed_data += jpeg_data.tobytes()  # Add the actual jpeg data
         sock.sendto(packed_data, (UDP_IP, UDP_PORT))
 
+    print("released") 
     cap.release()
 
 if __name__ == "__main__": 

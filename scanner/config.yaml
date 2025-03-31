@@ -1,12 +1,12 @@
 prod: false 
 
 server: 
-  host: "127.0.0.1"
+  host: "192.168.0.40"
   port: 8000
   live_feed_port: 5005
 
 dropbox: 
-  id: 3 
+  id: 1 
   address: ""
 
 scanners:  
