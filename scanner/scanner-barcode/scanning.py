@@ -21,7 +21,7 @@ from barcode_usb_scanner import hid2ascii
 # importing post_request from above 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 sys.path.append(parent_dir)
-from post_request import send_data, config 
+from post_request import config, send_data
 
 
 def send_code39_to_server(barcode : str) -> bool: 
