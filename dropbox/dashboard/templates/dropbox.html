@@ -101,16 +101,13 @@
 </figure>
 
 <div class=" max-w-full h-[300px]">
-<h3>Videos</h3>
+<h3>Motion Recordings</h3>
 <ul class="w-100 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
         {% for name, size, time in media_files %}
-        <li class="w-full px-4 py-2 border-b border-gray-200 rounded-t-lg dark:border-gray-600">{{name}} {{size}} {{time}} </li>
+        <a href="{% url 'video' video_filename=name %}"><li class="w-full px-4 py-2 border-b border-gray-200 rounded-t-lg dark:border-gray-600">{{name}} {{size}} {{time}} </li></a>
     {% endfor %}
 </ul>
-
-
-
 </div>
 
       </div>
