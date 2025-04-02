@@ -41,7 +41,7 @@ def dashboard(request, dropbox_id):
   media_files = []
   media_dir = os.path.join(os.path.dirname(__file__), 'media')
   for filename in os.listdir(media_dir): 
-    if filename.endswith('.mp4') and filename.startswith(str(dropbox_id)): 
+    if filename.endswith('.webm') and filename.startswith(str(dropbox_id)): 
             full_path = os.path.join(media_dir, filename)
             time = os.path.getmtime(full_path)
             size = str(round(os.path.getsize(full_path) / (1024 * 1024), 2)) + " MB"

@@ -146,10 +146,10 @@ class UDPVideoReceiver:
 
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_path = os.path.join(self.video_directory, f"{dropbox_id}_video_{timestamp}.mp4")
+        output_path = os.path.join(self.video_directory, f"{dropbox_id}_video_{timestamp}.webm")
         
         # Create VideoWriter
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        fourcc = cv2.VideoWriter_fourcc(*'vp80')
         out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
         # content 
