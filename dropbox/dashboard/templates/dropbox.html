@@ -99,6 +99,20 @@
     <img id="video" data-dropbox-id="{{dropbox_id}}" class="h-auto max-w-full rounded-lg" src="{% static 'images/stream_unavailable.png' %}" alt="image description">
   <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Live Feed</figcaption>
 </figure>
+
+<div class=" max-w-full h-[300px]">
+<h3>Videos</h3>
+<ul class="w-100 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+
+        {% for name, size, time in media_files %}
+        <li class="w-full px-4 py-2 border-b border-gray-200 rounded-t-lg dark:border-gray-600">{{name}} {{size}} {{time}} </li>
+    {% endfor %}
+</ul>
+
+
+
+</div>
+
       </div>
     </div>
 

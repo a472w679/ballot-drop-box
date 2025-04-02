@@ -1,3 +1,14 @@
+# Name of code artifact: udp_receiver.py 
+# Brief description of what the code does: Receives udp packets from senders, specifically a Raspberry Pi's, and sends the data to a websocket. 
+# Programmer’s name: Xavier Ruyle   
+# Date the code was created: 2/20/25
+# Preconditions: UDP packets being sent must be in correct format and meet a correct packed struct protocol 
+# Postconditions: Django will start this in its ready() function
+# Return values or types, and their meanings: N/A
+# Error and exception condition values or types that can occur, and their meanings: N/A
+# Side effects: 
+# Invariants: N/A
+
 import base64
 import os
 import socket
@@ -26,9 +37,19 @@ class UDPVideoReceiver:
         self.content_frames_buffer = []
         self.motion_detected_state = False  # informs whehter or not frames should be stored in buffer 
         self.start_time = datetime.now()  # the time is starts recording (default on __init__) 
-        self.video_directory = os.path.join(os.path.dirname(__file__), "static", "media") 
+        self.video_directory = os.path.join(os.path.dirname(__file__), "media") 
 
     def start_receiving(self):
+        '''
+        Receive frame data over udp packets from a Raspberry Pi. Frame data must be packed in a struct with the following protocol: 
+            - (int, int, bool, bytes)
+            - (SENDER_ID, JPEG_SIZE, MOTION_DETECTED, JPEG FRAME OF SIZE 'JPEG_SIZE')
+        If protocol is not met, the data received will not be processed 
+
+        Frame data is encoded into base64 (utf-8) and sent to a websocket and handled in consumers.py. 
+
+        If motion is detected, frame data will be recorded and saved on disk in static/media.
+        '''
         print(f"UDP receiver started on port {self.udp_port}")
         MIN_PACKET_SIZE = 12 
         while True:
@@ -38,7 +59,6 @@ class UDPVideoReceiver:
             if len(data) < MIN_PACKET_SIZE:
                 continue 
 
-            
             # Verify that there enough data for the claimed JPEG size
             try:
                 sender_id = struct.unpack('!I', data[:4])[0]
@@ -76,17 +96,17 @@ class UDPVideoReceiver:
             )
 
             # save a video recording if motion is detected 
-            self.save_video_recording(motion_detected, jpeg_bytes)
-
-
-
+            self.save_video_recording(motion_detected, jpeg_bytes, sender_id)
 
     def jpeg_to_frame(self, jpeg_bytes):
         """
         Convert JPEG bytes to OpenCV frame
 
         Args: 
+            motion_detected (bool): 
             jpeg_bytes (bytes): jpeg frames in bytes 
+            sender_id (int): id of the dropbox that the frame data came from  
+            
 
         Returns: 
             cv2.typing.MatLike
@@ -100,13 +120,14 @@ class UDPVideoReceiver:
             return None
 
 
-    def save_buffer_as_video(self, frame_buffer, fps):
+    def save_buffer_as_video(self, frame_buffer, fps, dropbox_id):
         """
         Save buffered frames as video file
 
         Args: 
             frame_buffer (cv2.typing.MatLike): frames taken from live feed
-            fps (float): the real number of frames per time taken since motion was detected  
+            fps (float): real number of frames per time taken since motion was detected  
+            dropbox_id (int): id of the dropbox that the frame data came from 
 
         Returns: 
             str of video  
@@ -117,8 +138,15 @@ class UDPVideoReceiver:
 
         height, width = frame_buffer[0].shape[:2]
 
+        # remove recordings if length exceeds 50 
+        video_directory_files = os.listdir(self.video_directory)
+        if len(video_directory_files) > 50: 
+            oldest_file = min(video_directory_files, key=lambda f: os.path.getmtime(os.path.join(self.video_directory, f)))
+            os.remove(oldest_file)
+
+
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_path = os.path.join(self.video_directory, f"video_{timestamp}.mp4")
+        output_path = os.path.join(self.video_directory, f"{dropbox_id}_video_{timestamp}.mp4")
         
         # Create VideoWriter
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -133,13 +161,13 @@ class UDPVideoReceiver:
         
         return output_path
 
-    def save_video_recording(self, motion_detected, jpeg_bytes): 
+    def save_video_recording(self, motion_detected, jpeg_bytes, dropbox_id): 
         '''
         Saves past 10-15 seconds of live feed to disk if motion is detected  
 
         Args: 
-            motion_detected (bool): 
-            jpeg_bytes ()
+            motion_detected (bool): was motion bool true from frame data 
+            jpeg_bytes (bytes): frame data 
         '''
         frame = self.jpeg_to_frame(jpeg_bytes)
         self.prologue_frames_buffer.append(frame)
@@ -158,23 +186,19 @@ class UDPVideoReceiver:
             # Convert JPEG bytes to OpenCV frame
             if frame is not None:
                 num_frames = len(self.content_frames_buffer)
-                if num_frames != (self.max_content_frames + self.prologue_frames_buffer.maxlen): 
+                if num_frames < (self.max_content_frames + self.prologue_frames_buffer.maxlen): 
                     self.content_frames_buffer.append(frame)
                 else:  # save video 
                     seconds = datetime.now() - self.start_time 
                     realfps = num_frames / seconds.total_seconds()   # frames per second 
                     # print(num_frames, seconds.total_seconds(), realfps)
-                    save_buffer_as_video_thread = threading.Thread(target=self.save_buffer_as_video, daemon=True, args=(self.content_frames_buffer.copy(), realfps,))
+                    save_buffer_as_video_thread = threading.Thread(target=self.save_buffer_as_video, daemon=True, args=(self.content_frames_buffer.copy(), realfps, dropbox_id, ))
                     save_buffer_as_video_thread.start()
 
                     self.motion_detected_state = False 
                     self.content_frames_buffer.clear()
                     self.prologue_frames_buffer.clear()
 
-
-
-
-# To start in Django
 def start_udp_receiver():
     receiver = UDPVideoReceiver()
     receiver.start_receiving()
