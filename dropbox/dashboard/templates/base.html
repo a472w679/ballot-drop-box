@@ -28,6 +28,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}{% endblock%}</title>
     <!-- <script src="https://unpkg.com/@tailwindcss/browser@4"></script> -->
+    {% block head %} {% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.16/mediaelement-and-player.min.js"></script>
   </head>
@@ -51,10 +52,10 @@
           <!-- Home Button -->
           <div class="flex items-center">
             <a
-              href="/"
+              href="{% url 'map' %}"
               class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
-              Home
+              Map
             </a>
           </div>
         </div>
