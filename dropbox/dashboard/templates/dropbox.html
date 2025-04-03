@@ -13,107 +13,183 @@
 {% load static %}
 
 {% block title %} Dashboard #{{dropbox_id}} {% endblock %}
+
+{% block breadcrumb %} Dropbox {{dropbox_id}}{% endblock %}
     {% block content %} 
+<div class="flex flex-col ml-5 mr-5 mt-4 max-w-full h-200 ">
+  
+<div id="table" class="m-3 h-1/2 rounded-sm border-2 border-gray-50 shadow-sm bg-white">
+  <div id="btns" class="flex justify-between mt-1 ml-8 w-10 h-5 ">
+  </div>
+
+  <table class="w-96/100 m-5 divide-y-2 divide-gray-200">
+    <thead class="ltr:text-left rtl:text-right">
+      <tr class="*:font-medium *:text-gray-900">
+        <th class="px-3 py-2 whitespace-nowrap">Date</th>
+        <th class="px-3 py-2 whitespace-nowrap">Code 39</th>
+        <th class="px-3 py-2 whitespace-nowrap">IMb</th>
+        <th class="px-3 py-2 whitespace-nowrap">Street</th>
+        <th class="px-3 py-2 whitespace-nowrap">City</th>
+        <th class="px-3 py-2 whitespace-nowrap">Status</th>
+      </tr>
+    </thead>
+
+    <tbody class="divide-y divide-gray-200">
+      <tr class="*:text-gray-900 *:first:font-medium">
+        <td class="px-3 py-2 whitespace-nowrap">2/04/2025</td>
+        <td class="px-3 py-2 whitespace-nowrap">ABC-1234</td>
+        <td class="px-3 py-2 whitespace-nowrap"></td>
+        <td class="px-3 py-2 whitespace-nowrap"></td>
+        <td class="px-3 py-2 whitespace-nowrap"></td>
+        <td class="px-3 py-2 whitespace-nowrap"></th>
+      </tr>
+
+      <tr class="*:text-gray-900 *:first:font-medium">
+        <td class="px-3 py-2 whitespace-nowrap">2/04/2025</td>
+        <td class="px-3 py-2 whitespace-nowrap">ABC-1234</td>
+        <td class="px-3 py-2 whitespace-nowrap"></td>
+        <td class="px-3 py-2 whitespace-nowrap"></td>
+        <td class="px-3 py-2 whitespace-nowrap"></td>
+        <td class="px-3 py-2 whitespace-nowrap"></th>
+      </tr>
+    </tbody>
 
 
-        <div class="flex">
-      <!-- Sidebar -->
-      <div class="w-1/4 bg-white p-6 rounded-lg shadow-lg mr-6">
 
-        <!-- Drop Box Tabs -->
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Drop Boxes</h2>
-        <ul>
-          <li class="mb-2">
-            <a
-              href="{% url 'dashboard' dropbox_id=1 %}"
-              class="w-full text-left p-2 bg-blue-100 rounded hover:bg-blue-200 block"
-            >
-              Drop Box #1
-            </a>
-          </li>
-          <li class="mb-2">
-            <a
-              href="{% url 'dashboard' dropbox_id=2 %}"
-              class="w-full text-left p-2 bg-blue-100 rounded hover:bg-blue-200 block"
-            >
-              Drop Box #2
-            </a>
-          </li>
-          <li class="mb-2">
-            <a
-              href="{% url 'dashboard' dropbox_id=3 %}"
-              class="w-full text-left p-2 bg-blue-100 rounded hover:bg-blue-200 block"
-            >
-              Drop Box #3
-            </a>
-          </li>
-        </ul>
-      </div>
+  </table>
+  <ul class="flex justify-center gap-1 text-gray-900">
+  <li>
+    <a
+      href="#"
+      class="grid size-8 place-content-center rounded border border-gray-200 transition-colors hover:bg-gray-50 rtl:rotate-180"
+      aria-label="Previous page"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="size-4"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </a>
+  </li>
 
-      <!-- Main Content -->
-      <div class="flex-1 bg-white p-6 rounded-lg shadow-lg">
-        <h1 class="text-2xl font-bold text-blue-600 mb-6">Dropbox #{{dropbox_id}} Dashboard</h1>
+  <li>
+    <a
+      href="#"
+      class="block size-8 rounded border border-gray-200 text-center text-sm/8 font-medium transition-colors hover:bg-gray-50"
+    >
+      1
+    </a>
+  </li>
 
-        <!-- Table for Drop Box #1 -->
-        <div id="box1" class="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <table
-            class="min-w-full text-xs text-black-700 uppercase bg-gray-50 dark:bg-white-700 dark:text-black-400"
-          >
-            <thead>
-              <tr class="border-b">
-                <th scope="col" class="py-6 px-4">Date</th>
-                <th scope="col" class="py-6 px-4">Code 39</th>
-                <th scope="col" class="py-6 px-4">IMb</th>
-                <th scope="col" class="py-6 px-4">Street Address</th>
-                <th scope="col" class="py-6 px-4">City</th>
-                <th scope="col" class="py-6 px-4">ZIP Code</th>
-                <th scope="col" class="py-6 px-4">Other (status, etc.)</th>
-              </tr>
-            </thead>
-            {% for data in envelope_data %}
-            <tbody>
-            <tr class="odd:bg-white  even:bg-gray  border-b  border-gray-200">
-                <th scope="row" class="py-6 px-4  text-center align-middle">{{data.date}}</th>
-                <td   class="py-6 px-4 text-center align-middle">{{data.code39}}</td>
-                <td   class="py-6 px-4 text-center align-middle">{{data.imb}}</td>
-                <td   class="py-6 px-4 text-center align-middle">{{data.streetaddress}}</td>
-                <td   class="py-6 px-4 text-center align-middle">{{data.city}}</td>
-                <td   class="py-6 px-4 text-center align-middle">{{data.zipcode}}</td>
-                <td   class="py-6 px-4 text-center align-middle">{{data.status}}</td>
-              </tr>
-            </tbody>
-            {% endfor %}
-          </table>
-        </div>
+  <li
+    class="block size-8 rounded border border-indigo-600 bg-indigo-600 text-center text-sm/8 font-medium text-white"
+  >
+    2
+  </li>
 
-        <!-- Download into csv Button -->
-        <form action={% url 'export' dropbox_id=dropbox_id %} method="get" target="_blank"> 
-        <button
-          type="submit" class="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Download CSV
-        </button>
-        </form>
+  <li>
+    <a
+      href="#"
+      class="block size-8 rounded border border-gray-200 text-center text-sm/8 font-medium transition-colors hover:bg-gray-50"
+    >
+      3
+    </a>
+  </li>
 
-<figure class="max-w-lg mt-5">
-    <img id="video" data-dropbox-id="{{dropbox_id}}" class="h-auto max-w-full rounded-lg" src="{% static 'images/stream_unavailable.png' %}" alt="image description">
-  <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Live Feed</figcaption>
-</figure>
+  <li>
+    <a
+      href="#"
+      class="block size-8 rounded border border-gray-200 text-center text-sm/8 font-medium transition-colors hover:bg-gray-50"
+    >
+      4
+    </a>
+  </li>
 
-<div class=" max-w-full h-[300px]">
-<h3>Motion Recordings</h3>
-<ul class="w-100 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-
-        {% for name, size, time in media_files %}
-        <a href="{% url 'video' video_filename=name %}"><li class="w-full px-4 py-2 border-b border-gray-200 rounded-t-lg dark:border-gray-600">{{name}} {{size}} {{time}} </li></a>
-    {% endfor %}
-</ul>
+  <li>
+    <a
+      href="#"
+      class="grid size-8 place-content-center rounded border border-gray-200 transition-colors hover:bg-gray-50 rtl:rotate-180"
+      aria-label="Next page"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="size-4"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </a>
+  </li>
+  </ul>
 </div>
 
-      </div>
+<div class="flex h-90">
+
+<div class="flex justify-center items-center m-3 w-full rounded-sm   border-gray-50 shadow-sm bg-white border-2">
+
+    <img id="video" data-dropbox-id="{{dropbox_id}}" class="h-9/10 max-w-9/10 rounded-lg" src="{% static 'images/stream_unavailable.png' %}" alt="live feed">
+
+</div>
+
+<div class="flex flex-col justify-center m-3 w-full rounded-sm  border-gray-50 shadow-sm bg-white border-2">
+  <article
+    class="flex items-center gap-4 m-3 rounded-sm border border-gray-200 bg-white p-6 sm:justify-between"
+  >
+    <span class="rounded-full bg-blue-100 p-3 text-blue-600 sm:order-last">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+        />
+      </svg>
+    </span>
+
+    <div>
+      <p class="text-2xl font-medium text-gray-900">30</p>
+
+      <p class="text-sm text-gray-500">Total Scanned</p>
     </div>
+  </article>
+  <article
+    class="flex items-center gap-4 m-3 rounded-sm border border-gray-200 bg-white p-6 sm:justify-between"
+  >
+    <span class="rounded-full bg-blue-100 p-3 text-blue-600 sm:order-last">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+        />
+      </svg>
+    </span>
+
+    <div>
+      <p class="text-2xl font-medium text-gray-900">10</p>
+
+      <p class="text-sm text-gray-500">Motion Detected</p>
+    </div>
+  </article>
+  
+</div>
+
+</div>
 
     
-    <script src="{% static 'js/live_feed.js' %}" type="text/javascript"></script>
 
     {% endblock %}
+  {% block scriptfooter %} 
+    <script src="{% static 'js/live_feed.js' %}" type="text/javascript"></script>
+  {% endblock %}

@@ -25,7 +25,7 @@
   crossorigin=""
 ></script>
 
-{% endblock %} {% block content %}
+{% endblock %} {% block breadcrumb %} Map {% endblock %} {% block content %}
 
 <style>
   .leaflet-attribution-flag {
@@ -117,9 +117,12 @@
   }
 </style>
 
-<div class="map-container flex justify-center">
-  <div id="map" class="hs-leaflet h-[500px] w-[600px]"></div>
-</div>
+<div
+  id="map"
+  class="hs-leaflet m-5 h-screen w-max-full border-2 border-gray-100 shadow-sm z-0"
+></div>
+
+{% endblock %} {% block scriptfooter %}
 
 <script type="text/javascript" src="{% static 'js/map_leaflet.js' %}"></script>
 {% endblock %}

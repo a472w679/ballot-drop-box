@@ -11,38 +11,40 @@
 
 {% extends 'base.html' %} {% load static %} {% block title %}Home{% endblock %}
 {% block content %}
-<div class="max-w-4xl mx-auto text-center">
-  <h1 class="text-4xl font-bold text-blue-600 mb-6">
-    Welcome to the Dropbox Dashboard
-  </h1>
-  <p class="text-lg text-gray-700 mb-8">
-    Select a drop box below to view its details and live feed.
-  </p>
+<section
+  class="m-5 rounded-sm max-w-full shadow-sm bg-white lg:grid lg:h-screen lg:place-content-center"
+>
+  <div
+    class="mx-auto w-full max-w-full px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32"
+  >
+    <div class="mx-auto max-w-prose text-center">
+      <h1 class="text-4xl font-bold text-gray-900 sm:text-5xl">
+        Track
+        <strong class="text-indigo-600"> Ballot Drop Boxes </strong>
+        from the web
+      </h1>
 
-  <!-- Drop Box Links -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <a
-      href="{% url 'dashboard' dropbox_id=1 %}"
-      class="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
-    >
-      <h2 class="text-xl font-semibold text-gray-800 mb-2">Drop Box #1</h2>
-      <p class="text-gray-600"></p>
-    </a>
-    <a
-      href="{% url 'dashboard' dropbox_id=2 %}"
-      class="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
-    >
-      <h2 class="text-xl font-semibold text-gray-800 mb-2">Drop Box #2</h2>
-      <p class="text-gray-600"></p>
-    </a>
-    <a
-      href="{% url 'dashboard' dropbox_id=3 %}"
-      class="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
-    >
-      <h2 class="text-xl font-semibold text-gray-800 mb-2">Drop Box #3</h2>
-      <p class="text-gray-600"></p>
-    </a>
+      <p class="mt-4 text-base text-pretty text-gray-700 sm:text-lg/relaxed">
+        Download code39 and imb data
+      </p>
+
+      <div class="mt-4 flex justify-center gap-4 sm:mt-6">
+        <a
+          class="inline-block rounded border border-indigo-600 bg-indigo-600 px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
+          href="#"
+        >
+          View Dropboxes
+        </a>
+
+        <a
+          class="inline-block rounded border border-gray-200 px-5 py-3 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900"
+          href="#"
+        >
+          Learn More
+        </a>
+      </div>
+    </div>
   </div>
-</div>
+</section>
 
 {% endblock %}
