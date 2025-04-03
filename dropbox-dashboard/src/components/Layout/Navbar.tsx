@@ -44,10 +44,9 @@ const Navbar: React.FC = () => {
           
           <div className="hidden md:flex items-center space-x-6">
             <NavLink to="/" active={location.pathname === '/'}>Home</NavLink>
-            <NavLink to="/dashboard" active={location.pathname.includes('/dashboard')}>Dashboard</NavLink>
-            <NavLink to="/map" active={location.pathname === '/map'}>Map</NavLink>
-            <NavLink to="/analytics" active={location.pathname === '/analytics'}>Analytics</NavLink>
-            <NavLink to="/settings" active={location.pathname === '/settings'}>Settings</NavLink>
+            <NavLink to="/dashboard/:dropboxId" active={location.pathname.includes('/dashboard')}>Dashboard</NavLink>
+
+
             
             {/* Notification bell */}
             <button className="relative p-2 text-white hover:text-blue-400 transition-colors">

@@ -6,7 +6,7 @@ import store from './store';
 import Navbar from './components/Layout/Navbar';
 import HomePage from './pages/HomePage';
 import DashboardPage from './pages/DashboardPage';
-import MapPage from './pages/MapPage';
+
 import VideoPage from './pages/VideoPage';
 
 const App: React.FC = () => {
@@ -19,7 +19,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/dashboard/:dropboxId" element={<DashboardPage />} />
-              <Route path="/map" element={<MapPage />} />
+
               <Route path="/video/:videoName" element={<VideoPage />} />
             </Routes>
           </main>
