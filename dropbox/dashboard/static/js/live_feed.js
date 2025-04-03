@@ -30,3 +30,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
   startStream();
 });
+
+// <script src="{% static 'js/live_feed.js' %}" type="text/javascript"></script>

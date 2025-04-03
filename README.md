@@ -1,12 +1,20 @@
 # Ballot Drop Box Scanner
 A system that scans, tracks, and stores information of ballot envelopes that are deposited in ballot drop boxes.  
 
+
 ## Setup 
 
 ### Pre Reqs
 1) Make sure you have a Raspberry Pi and an AWS EC2 Instance 
 - this system was tested on a Raspberry Pi 5 Model B Rev 1.0 
 - hosting was tested on a AWS EC2 Debian instance 
+
+### Installation
+```
+git clone https://github.com/a472w679/ballot-drop-box
+
+cp scanner/config.yaml.secret scanner/config.yaml
+```
 
 ### Project Modules
 1) Make a virtual env in the project root directory 
@@ -58,14 +66,17 @@ For each scanner that exists, add its corresponding correct idVendor and idProdu
 More information: https://github.com/vpatron/barcode_scanner_python 
 
 ### Config (Raspberry Pi)
-[`scanner/config.yaml`]
+```
+cp scanning/config.yaml.secret scanning/config.yaml 
+```
+- config.yaml.secret is an example 
 
+[`scanner/config.yaml`]
 #### prod
 ```yaml
 prod: false 
 ```
 - set prod to false if testing locally, true if not 
-- this is a work in progress 
 
 #### server
 ```yaml
@@ -84,7 +95,7 @@ dropbox:
   address: ""
 ```
 - scan data will go to corresponding dropbox id tab on the server (subject to change)
-- address optional 
+- address optional
 
 #### scanners
 ```
@@ -125,7 +136,7 @@ Comment=Start the ballot drop box system
 Terminal=true
 Type=Application
 Categories=Utility;Application;
-Exec=lxterminal -e "python3 /home/xruyle/dev/ballot-drop-box/dropbox/start.py"
+Exec=lxterminal -e "python3 /home/xruyle/dev/ballot-drop-box/scanner/start.py"
 ```
 
 3) Now you can create a symlink to the .desktop file on the Desktop 

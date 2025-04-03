@@ -40,9 +40,6 @@ def send_data(data : dict) -> bool:
             json=data,
             headers={'Content-Type': 'application/json'}
         )
-        # print(f"Status Code: {response.status_code}")
-        # print(f"Response: {response.text}")
-        # return response.ok
         return response.ok 
     except Exception as e:
         print(f"Error sending data: {e}")

@@ -1,0 +1,21 @@
+<!-- // Name of code artifact: video.html -->
+<!-- // Brief description of what the code does: video template -->
+<!-- // Programmer’s name: Xavier Ruyle -->
+<!-- // Date the code was created: 2/20/25 -->
+<!-- // Preconditions: base.html -->
+<!-- // Postconditions: N/A -->
+<!-- // Return values or types, and their meanings: N/A -->
+<!-- // Error and exception condition values or types that can occur, and their meanings: N/A -->
+<!-- // Side effects: -->
+<!-- // Invariants: N/A -->
+{% extends 'base.html' %} {% load static %} {% block title %}Home{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto text-center">
+  <h1 class="text-4xl font-bold text-blue-600 mb-6">{{path}}</h1>
+  <video controls>
+    <source src="{{path}}" type="video/webm" />
+  </video>
+
+  <!-- Drop Box Links -->
+</div>
+{% endblock %}
