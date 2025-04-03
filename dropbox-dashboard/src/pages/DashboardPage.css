@@ -1,0 +1,44 @@
+
+@keyframes wave {
+  0%, 100% { transform: translateX(-50%); }
+  50% { transform: translateX(0); }
+}
+
+@keyframes wave-reverse {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-50%); }
+}
+
+@keyframes dash {
+  to { stroke-dashoffset: 20; }
+}
+
+@keyframes radar {
+  0% { transform: scale(0); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+.animate-dash {
+  animation: dash 15s linear infinite;
+}
+
+.animate-radar {
+  animation: radar 3s ease-out infinite;
+}
+
+.animate-wave {
+  animation: wave 25s linear infinite;
+}
+
+.animate-wave-reverse {
+  animation: wave-reverse 20s linear infinite;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

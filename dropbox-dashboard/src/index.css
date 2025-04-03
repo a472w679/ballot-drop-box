@@ -1,0 +1,44 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add these global styles to your index.css file to remove white lines */
+
+/* Reset margins and paddings */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Remove body margins and set overflow handling */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #0f172a; /* Match your dark theme background color */
+  color: white;
+  min-height: 100vh;
+}
+
+/* Make sure root and app containers fill the viewport */
+#root, 
+.app {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Remove default link styling */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Fix for potential HTML/body height issues */
+html {
+  height: 100%;
+  overflow-x: hidden;
+}

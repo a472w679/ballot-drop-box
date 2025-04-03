@@ -4,3 +4,4 @@
 **/db.sqlite3
 dropbox/dashboard/static/media/*
 
+node_modules

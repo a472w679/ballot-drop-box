@@ -1,0 +1,56 @@
+/* HomePage.css - Custom animations */
+
+@keyframes wave {
+    0%, 100% { transform: translateX(-50%); }
+    50% { transform: translateX(0); }
+  }
+  
+  @keyframes dash {
+    to { stroke-dashoffset: 20; }
+  }
+  
+  @keyframes radar {
+    0% { transform: scale(0); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 0; }
+  }
+  
+  .animate-wave {
+    animation: wave 7s ease-in-out infinite;
+  }
+  
+  .animate-wave-reverse {
+    animation: wave 9s ease-in-out infinite reverse;
+  }
+  
+  .animate-dash {
+    animation: dash 15s linear infinite;
+  }
+  
+  .animate-radar {
+    animation: radar 3s ease-out infinite;
+  }
+  
+  /* Define custom Tailwind-like classes for animations */
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
+  .animate-ping {
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  
+  @keyframes ping {
+    75%, 100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
