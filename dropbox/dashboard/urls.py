@@ -9,7 +9,7 @@ urlpatterns = [
     path('dashboard/<int:dropbox_id>', views.dashboard, name='dashboard'),
     path('export/<int:dropbox_id>', views.export, name='export'),
     path('api/scandata', views.receive_sensor_data, name='receive_sensor_data'),
-    path('videos/<str:video_filename>', views.vidoe, name='video'),
+    path('videos/<str:video_filename>', views.video, name='video'),
     path('map', views.map, name='map'),
 ]
 
