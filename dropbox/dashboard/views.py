@@ -15,6 +15,7 @@ import os
 
 import numpy as np
 from django.conf import settings
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
@@ -38,9 +39,37 @@ def map(request):
   context = {}
   return HttpResponse(template.render(context, request))
 
+def dropbox_list(request):
+  template = loader.get_template('dropbox_list.html')
+  unique_dropbox_ids = EnvelopeScan.objects.order_by('dropboxid').values_list('dropboxid', flat=True).distinct()
+  context = {"dropbox_ids": unique_dropbox_ids}
+  return HttpResponse(template.render(context, request))
+
+def video_list(request): 
+  template = loader.get_template('video_list.html')
+
+  # getting media files from static/media 
+  media_files = []
+  media_dir = os.path.join(os.path.dirname(__file__), 'media')
+  for filename in os.listdir(media_dir): 
+    if filename.endswith('.webm'): 
+            full_path = os.path.join(media_dir, filename)
+            time = os.path.getmtime(full_path)
+            size = str(round(os.path.getsize(full_path) / (1024 * 1024), 2)) + " MB"
+            datetime_object = datetime.datetime.fromtimestamp(time)
+            formatted_time = datetime_object.strftime("%Y-%m-%d %H:%M:%S")
+
+            media_files.append((filename, size, formatted_time)) 
+
+
+    context = {"media_files": media_files}
+  return HttpResponse(template.render(context, request))
 
 def dashboard(request, dropbox_id):
-  envelope_data = EnvelopeScan.objects.all().filter(dropboxid=dropbox_id).values()
+  envelope_data = EnvelopeScan.objects.all().filter(dropboxid=dropbox_id).order_by('-date')
+  paginator = Paginator(envelope_data, 10)
+  page_number = request.GET.get('page')
+  page_obj = paginator.get_page(page_number)
 
   # getting media files from static/media 
   media_files = []
@@ -57,7 +86,7 @@ def dashboard(request, dropbox_id):
 
   template = loader.get_template('dropbox.html')
   context = {
-    'envelope_data': envelope_data,
+    'page_obj': page_obj,
     'dropbox_id': dropbox_id,
     'media_files': media_files
   }

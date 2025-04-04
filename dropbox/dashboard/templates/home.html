@@ -8,43 +8,26 @@
 <!-- // Error and exception condition values or types that can occur, and their meanings: N/A -->
 <!-- // Side effects: -->
 <!-- // Invariants: N/A -->
-
-{% extends 'base.html' %} {% load static %} {% block title %}Home{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
 {% block content %}
-<section
-  class="m-5 rounded-sm max-w-full shadow-sm bg-white lg:grid lg:h-screen lg:place-content-center"
->
-  <div
-    class="mx-auto w-full max-w-full px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32"
-  >
-    <div class="mx-auto max-w-prose text-center">
-      <h1 class="text-4xl font-bold text-gray-900 sm:text-5xl">
-        Track
-        <strong class="text-indigo-600"> Ballot Drop Boxes </strong>
-        from the web
-      </h1>
-
-      <p class="mt-4 text-base text-pretty text-gray-700 sm:text-lg/relaxed">
-        Download code39 and imb data
-      </p>
-
-      <div class="mt-4 flex justify-center gap-4 sm:mt-6">
-        <a
-          class="inline-block rounded border border-indigo-600 bg-indigo-600 px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
-          href="#"
-        >
-          View Dropboxes
-        </a>
-
-        <a
-          class="inline-block rounded border border-gray-200 px-5 py-3 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900"
-          href="#"
-        >
-          Learn More
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
+    <section class="mb-10 rounded-sm max-w-full  lg:grid  lg:place-content-center">
+        <div class="mx-auto w-full max-w-full px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
+            <div class="mx-auto max-w-prose text-center">
+                <h1 class="text-4xl font-bold text-gray-900 sm:text-5xl">
+                    Track
+                    <strong class="text-indigo-600">Ballot Drop Boxes</strong>
+                    from the web
+                </h1>
+                <p class="mt-4 text-base text-pretty text-gray-700 sm:text-lg/relaxed">Download code39 and imb data</p>
+                <div class="mt-4 flex justify-center gap-4 sm:mt-6">
+                    <a class="inline-block rounded border border-indigo-600 bg-indigo-600 px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
+                       href="{% url 'map' %}">View Dropboxes</a>
+                    <a class="inline-block rounded border border-gray-200 px-5 py-3 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900"
+                       href="#">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

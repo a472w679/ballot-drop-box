@@ -8,26 +8,22 @@
 <!-- // Error and exception condition values or types that can occur, and their meanings: N/A -->
 <!-- // Side effects: -->
 <!-- // Invariants: N/A -->
-
-{% extends 'base.html' %} {% load static %} {% block title %} Map {% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Map{% endblock %}
 {% block head %}
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-  crossorigin=""
-/>
-
-<!-- Make sure you put this AFTER Leaflet's CSS -->
-<script
-  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-  crossorigin=""
-></script>
-
-{% endblock %} {% block breadcrumb %} Map {% endblock %} {% block content %}
-
-<style>
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+{% endblock %}
+{% block breadcrumb %}Map{% endblock %}
+{% block content %}
+    <style>
   .leaflet-attribution-flag {
     display: none !important;
   }
@@ -115,14 +111,10 @@
     color: gray;
     border-radius: 1px;
   }
-</style>
-
-<div
-  id="map"
-  class="hs-leaflet m-5 h-screen w-max-full border-2 border-gray-100 shadow-sm z-0"
-></div>
-
-{% endblock %} {% block scriptfooter %}
-
-<script type="text/javascript" src="{% static 'js/map_leaflet.js' %}"></script>
+    </style>
+    <div id="map"
+         class="hs-leaflet ml-10 mr-10 mb-10 mt-5  h-screen w-max-full border-2 border-gray-100 shadow-sm z-0"></div>
+{% endblock %}
+{% block scriptfooter %}
+    <script type="text/javascript" src="{% static 'js/map_leaflet.js' %}"></script>
 {% endblock %}

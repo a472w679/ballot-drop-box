@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dropbox List{% endblock %}
+{% block breadcrumb %}
+    <li>
+        <a href="{% url 'list' %}"
+           class="block transition-colors hover:text-gray-900">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="size-5 opacity-75"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor"
+                 stroke-width="2">
+                <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5" />
+                <path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z" />
+            </svg>
+            <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
+                Dropboxes
+            </span>
+        </a>
+    </li>
+{% endblock %}
+{% block content %}
+    <div class="m-3 max-h-full rounded-sm border-2 border-gray-50 shadow-sm bg-white">
+        <dl class=" divide-y divide-gray-200 text-sm *:even:bg-gray-50">
+            <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+                <a href="{% url 'dashboard' dropbox_id=1 %}">
+                    <dt class="font-medium text-gray-900">Dropbox 1</dt>
+                </a>
+                <dd class="text-gray-700 sm:col-span-2">
+                    Douglas County Clerk and Election Office
+                </dd>
+            </div>
+        </dl>
+    </div>
+{% endblock %}
+{% block scriptfooter %}{% endblock %}

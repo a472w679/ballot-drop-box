@@ -8,14 +8,16 @@
 <!-- // Error and exception condition values or types that can occur, and their meanings: N/A -->
 <!-- // Side effects: -->
 <!-- // Invariants: N/A -->
-{% extends 'base.html' %} {% load static %} {% block title %}Home{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block breadcrumb %}{{ path }}{% endblock %}
 {% block content %}
-<div class="max-w-4xl mx-auto text-center">
-  <h1 class="text-4xl font-bold text-blue-600 mb-6">{{path}}</h1>
-  <video controls>
-    <source src="{{path}}" type="video/webm" />
-  </video>
-
-  <!-- Drop Box Links -->
-</div>
+    <div class=" max-w-4xl mx-auto text-center">
+        <h1 class="text-4xl font-bold text-blue-600 mb-6"></h1>
+        <video controls class="mx-auto mb-6">
+            <source src="{{ path }}" type="video/webm" />
+        </video>
+        <!-- Drop Box Links -->
+    </div>
 {% endblock %}
