@@ -74,7 +74,7 @@
                         <div class="px-2">
                             <ul class="space-y-1 border-t border-gray-100 pt-4">
                                 <li>
-                                    <a href="{% url 'video-list' %}"
+                                    <a href="{% url 'list' %}"
                                        class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              class="size-5 opacity-75"
@@ -82,10 +82,11 @@
                                              viewBox="0 0 24 24"
                                              stroke="currentColor"
                                              stroke-width="2">
-                                            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line>
+                                            <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5" />
+                                            <path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z" />
                                         </svg>
                                         <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
-                                            Recordings
+                                            Dropboxes
                                         </span>
                                     </a>
                                 </li>
@@ -107,7 +108,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'list' %}"
+                                    <a href="{% url 'video-list' %}"
                                        class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              class="size-5 opacity-75"
@@ -115,11 +116,10 @@
                                              viewBox="0 0 24 24"
                                              stroke="currentColor"
                                              stroke-width="2">
-                                            <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5" />
-                                            <path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z" />
+                                            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line>
                                         </svg>
                                         <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
-                                            Dropboxes
+                                            Recordings
                                         </span>
                                     </a>
                                 </li>
@@ -138,27 +138,28 @@
                                             Account
                                         </span>
                                     </a>
+                                    <li>
+                                        <a href="#"
+                                           class="ml-1/2 group relative flex w-full justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 class="size-5 opacity-75"
+                                                 fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor"
+                                                 stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                            </svg>
+                                            <span class="invisible absolute   ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
+                                                Logout
+                                            </span>
+                                        </a>
+                                    </li>
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                <div class="border-t border-gray-100 bg-white p-2">
-                    <a href="#"
-                       class="group relative flex w-full justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             class="size-5 opacity-75"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke="currentColor"
-                             stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                        <span class="invisible absolute   ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
-                            Logout
-                        </span>
-                    </a>
-                </div>
+                <div class="border-t border-gray-100 bg-white p-2"></div>
             </div>
             <div class="flex flex-col flex-1">
                 <nav aria-label="Breadcrumb" class="ml-10 mt-5">
