@@ -16,7 +16,7 @@
         <a href="{% url 'list' %}"
            class="block transition-colors hover:text-gray-900">
             <svg xmlns="http://www.w3.org/2000/svg"
-                 class="size-5 opacity-75"
+                 class="size-4 opacity-75"
                  fill="none"
                  viewBox="0 0 24 24"
                  stroke="currentColor"
@@ -44,20 +44,23 @@
         <div id="table"
              class="m-3 max-h-full rounded-sm border-2 border-gray-50 shadow-sm bg-white">
             <div id="btns" class="flex justify-between mt-3 mr-23 ml-auto w-10 h-5 ">
-                <button id="exportButton"
-                        class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none  focus:ring-gray-50 "
-                        type="button">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         class="size-5 opacity-75"
-                         fill="none"
-                         viewBox="0 0 24 24"
-                         stroke="currentColor"
-                         stroke-width="2">
-                        <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5" />
-                    </svg>
-                </button>
+                <form action="{% url 'export' dropbox_id=dropbox_id %}"
+                      method="get"
+                      target="_blank"
+                      class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none  focus:ring-gray-50 ">
+                    <button id="exportButton" class="cursor-pointer" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="size-5 opacity-75"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor"
+                             stroke-width="2">
+                            <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5" />
+                        </svg>
+                    </button>
+                </form>
                 <button id="filterMenu"
-                        class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none  focus:ring-gray-50">
+                        class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none  focus:ring-gray-50 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="size-5 opacity-75"
                          fill="none"
@@ -141,7 +144,7 @@
                 </ul>
             {% endif %}
         </div>
-        <div class="flex h-90">
+        <div class="flex flex-wrap lg:flex-nowrap  h-max-full">
             <div class="flex justify-center items-center m-3 w-full rounded-sm   border-gray-50 shadow-sm bg-white border-2">
                 <img id="video"
                      data-dropbox-id="{{ dropbox_id }}"
@@ -168,7 +171,7 @@
                     </svg>
                 </span>
                 <div>
-                    <p class="text-2xl font-medium text-gray-900">30</p>
+                    <p class="text-2xl font-medium text-gray-900">{{ num_scanned }}</p>
                     <p class="text-sm text-gray-500">Total Scanned</p>
                 </div>
             </article>
@@ -190,7 +193,7 @@
                 </svg>
             </span>
             <div>
-                <p class="text-2xl font-medium text-gray-900">10</p>
+                <p class="text-2xl font-medium text-gray-900">{{ num_motion_detections }}</p>
                 <p class="text-sm text-gray-500">Motion Detected</p>
             </div>
         </article>

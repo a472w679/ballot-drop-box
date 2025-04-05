@@ -11,12 +11,39 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Home{% endblock %}
-{% block breadcrumb %}{{ path }}{% endblock %}
+{% block breadcrumb %}
+    <li>
+        <a href="{% url 'video-list' %}"
+           class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="size-4 opacity-75"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor"
+                 stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line>
+            </svg>
+            <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
+                Recordings
+            </span>
+        </a>
+    </li>
+    <li class="rtl:rotate-180">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="size-4"
+             viewBox="0 0 20 20"
+             fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+        </svg>
+    </li>
+    {{ path }}
+{% endblock %}
 {% block content %}
     <div class=" max-w-4xl mx-auto text-center">
         <h1 class="text-4xl font-bold text-blue-600 mb-6"></h1>
-        <video controls class="mx-auto mb-6">
+        <video controls autoplay class="mx-auto mb-6">
             <source src="{{ path }}" type="video/webm" />
+            <a href="{{ path }}" download>Download video</a>
         </video>
         <!-- Drop Box Links -->
     </div>

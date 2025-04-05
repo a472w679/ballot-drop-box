@@ -67,28 +67,21 @@ def video_list(request):
 
 def dashboard(request, dropbox_id):
   envelope_data = EnvelopeScan.objects.all().filter(dropboxid=dropbox_id).order_by('-date')
+  num_scanned = len(envelope_data)
+  media_dir = os.path.join(os.path.dirname(__file__), 'media')
+  num_motion_detections = len([x for x in os.listdir(media_dir) if x.endswith(".webm") and x.startswith(f"{dropbox_id}")])
+
+
   paginator = Paginator(envelope_data, 10)
   page_number = request.GET.get('page')
   page_obj = paginator.get_page(page_number)
 
-  # getting media files from static/media 
-  media_files = []
-  media_dir = os.path.join(os.path.dirname(__file__), 'media')
-  for filename in os.listdir(media_dir): 
-    if filename.endswith('.webm') and filename.startswith(str(dropbox_id)): 
-            full_path = os.path.join(media_dir, filename)
-            time = os.path.getmtime(full_path)
-            size = str(round(os.path.getsize(full_path) / (1024 * 1024), 2)) + " MB"
-            datetime_object = datetime.datetime.fromtimestamp(time)
-            formatted_time = datetime_object.strftime("%Y-%m-%d %H:%M:%S")
-
-            media_files.append((filename, size, formatted_time)) 
-
   template = loader.get_template('dropbox.html')
   context = {
+    'num_scanned': num_scanned,
+    'num_motion_detections': num_motion_detections,
     'page_obj': page_obj,
     'dropbox_id': dropbox_id,
-    'media_files': media_files
   }
   return HttpResponse(template.render(context, request))
 
