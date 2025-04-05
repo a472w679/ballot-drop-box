@@ -17,6 +17,7 @@ import threading
 from collections import deque
 from datetime import datetime
 from io import BytesIO
+from pathlib import Path
 
 import numpy as np
 from asgiref.sync import async_to_sync
@@ -36,7 +37,7 @@ class UDPVideoReceiver:
         self.content_frames_buffer = []
         self.motion_detected_state = False  # informs whehter or not frames should be stored in buffer 
         self.start_time = datetime.now()  # the time is starts recording (default on __init__) 
-        self.video_directory = os.path.join(os.path.dirname(__file__), "media") 
+        self.video_directory = os.path.join(Path(__file__).resolve().parent.parent, "media") 
 
     def start_receiving(self):
         '''
