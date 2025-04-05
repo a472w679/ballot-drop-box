@@ -20,17 +20,23 @@
     </li>
 {% endblock %}
 {% block content %}
-    <div class="m-3 ml-10 mr-10 max-h-full rounded-sm border-2 border-gray-50 shadow-sm bg-white">
+    <div class="m-3 ml-10 mr-10 max-w-full max-h-full rounded-sm border-2 border-gray-50 shadow-sm bg-white">
         <dl class="divide-y divide-gray-200 text-sm *:even:bg-gray-50">
             {% for name, size, time in media_files %}
-                <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-                    <a href="{% url 'video' video_filename=name %}">
+                <a href="{% url 'video' video_filename=name %}">
+                    <div class="hover:bg-gray-50 grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
                         <dt class="font-medium text-gray-900">{{ name }}</dt>
-                    </a>
-                    <dd class="ml-auto text-gray-700 sm:col-span-2">
-                        {{ size }} - {{ time }}
-                    </dd>
-                </div>
+                        <dd class="ml-auto text-gray-700 sm:col-span-2">
+                            {{ size }} - {{ time }}
+                        </dd>
+                    </div>
+                </a>
+                {% if forloop.counter < media_files|length %}
+                    <span class="flex items-center">
+                        <span class="h-px flex-1 bg-gray-300"></span>
+                        <span class="h-px flex-1 bg-gray-300"></span>
+                    </span>
+                {% endif %}
             {% endfor %}
         </dl>
     </div>

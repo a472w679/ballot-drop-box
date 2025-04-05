@@ -4,7 +4,7 @@
 {% block breadcrumb %}
     <li>
         <a href="{% url 'list' %}"
-           class="block transition-colors hover:text-gray-900">
+           class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
             <svg xmlns="http://www.w3.org/2000/svg"
                  class="size-4 opacity-75"
                  fill="none"
@@ -21,16 +21,28 @@
     </li>
 {% endblock %}
 {% block content %}
-    <div class="m-3 ml-10 mr-10 max-h-full rounded-sm border-2 border-gray-50 shadow-sm bg-white">
-        <dl class=" divide-y divide-gray-200 text-sm *:even:bg-gray-50">
-            <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-                <a href="{% url 'dashboard' dropbox_id=1 %}">
+    <div class="mx-4 sm:mx-10 my-3 max-h-full rounded-sm border-2 border-gray-50 shadow-sm bg-white overflow-x-hidden">
+        <dl class="  divide-y divide-gray-200 text-sm *:even:bg-gray-50">
+            <a href="{% url 'dashboard' dropbox_id=1 %}">
+                <div class="hover:bg-gray-50 grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
                     <dt class="font-medium text-gray-900">Dropbox 1</dt>
-                </a>
-                <dd class="text-gray-700 sm:col-span-2">
-                    Douglas County Clerk and Election Office
-                </dd>
-            </div>
+                    <dd class="ml-auto text-gray-700 sm:col-span-2 ">
+                        Douglas County Clerk and Election Office
+                    </dd>
+                </div>
+            </a>
+            <span class="flex items-center">
+                <span class="h-px flex-1 bg-gray-300"></span>
+                <span class="h-px flex-1 bg-gray-300"></span>
+            </span>
+            <a href="{% url 'dashboard' dropbox_id=2 %}">
+                <div class="hover:bg-gray-50 grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+                    <dt class="font-medium text-gray-900">Dropbox 2</dt>
+                    <dd class="ml-auto text-gray-700 sm:col-span-2 ">
+                        Douglas County Courthouse
+                    </dd>
+                </div>
+            </a>
         </dl>
     </div>
 {% endblock %}
