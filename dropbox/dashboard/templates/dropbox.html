@@ -8,112 +8,456 @@
 <!-- // Error and exception condition values or types that can occur, and their meanings: N/A -->
 <!-- // Side effects: -->
 <!-- // Invariants: N/A -->
-
 {% extends 'base.html' %}
 {% load static %}
-
-{% block title %} Dashboard #{{dropbox_id}} {% endblock %}
-    {% block content %} 
-
-
-        <div class="flex">
-      <!-- Sidebar -->
-      <div class="w-1/4 bg-white p-6 rounded-lg shadow-lg mr-6">
-
-        <!-- Drop Box Tabs -->
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Drop Boxes</h2>
-        <ul>
-          <li class="mb-2">
-            <a
-              href="{% url 'dashboard' dropbox_id=1 %}"
-              class="w-full text-left p-2 bg-blue-100 rounded hover:bg-blue-200 block"
-            >
-              Drop Box #1
-            </a>
-          </li>
-          <li class="mb-2">
-            <a
-              href="{% url 'dashboard' dropbox_id=2 %}"
-              class="w-full text-left p-2 bg-blue-100 rounded hover:bg-blue-200 block"
-            >
-              Drop Box #2
-            </a>
-          </li>
-          <li class="mb-2">
-            <a
-              href="{% url 'dashboard' dropbox_id=3 %}"
-              class="w-full text-left p-2 bg-blue-100 rounded hover:bg-blue-200 block"
-            >
-              Drop Box #3
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Main Content -->
-      <div class="flex-1 bg-white p-6 rounded-lg shadow-lg">
-        <h1 class="text-2xl font-bold text-blue-600 mb-6">Dropbox #{{dropbox_id}} Dashboard</h1>
-
-        <!-- Table for Drop Box #1 -->
-        <div id="box1" class="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <table
-            class="min-w-full text-xs text-black-700 uppercase bg-gray-50 dark:bg-white-700 dark:text-black-400"
-          >
-            <thead>
-              <tr class="border-b">
-                <th scope="col" class="py-6 px-4">Date</th>
-                <th scope="col" class="py-6 px-4">Code 39</th>
-                <th scope="col" class="py-6 px-4">IMb</th>
-                <th scope="col" class="py-6 px-4">Street Address</th>
-                <th scope="col" class="py-6 px-4">City</th>
-                <th scope="col" class="py-6 px-4">ZIP Code</th>
-                <th scope="col" class="py-6 px-4">Other (status, etc.)</th>
-              </tr>
-            </thead>
-            {% for data in envelope_data %}
-            <tbody>
-            <tr class="odd:bg-white  even:bg-gray  border-b  border-gray-200">
-                <th scope="row" class="py-6 px-4  text-center align-middle">{{data.date}}</th>
-                <td   class="py-6 px-4 text-center align-middle">{{data.code39}}</td>
-                <td   class="py-6 px-4 text-center align-middle">{{data.imb}}</td>
-                <td   class="py-6 px-4 text-center align-middle">{{data.streetaddress}}</td>
-                <td   class="py-6 px-4 text-center align-middle">{{data.city}}</td>
-                <td   class="py-6 px-4 text-center align-middle">{{data.zipcode}}</td>
-                <td   class="py-6 px-4 text-center align-middle">{{data.status}}</td>
-              </tr>
-            </tbody>
-            {% endfor %}
-          </table>
+{% block title %}Dashboard #{{ dropbox_id }}{% endblock %}
+{% block breadcrumb %}
+    <li>
+        <a href="{% url 'list' %}"
+           class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="size-4 opacity-75"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor"
+                 stroke-width="2">
+                <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5" />
+                <path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z" />
+            </svg>
+            <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
+                Dropboxes
+            </span>
+        </a>
+    </li>
+    <li class="rtl:rotate-180">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="size-4"
+             viewBox="0 0 20 20"
+             fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+        </svg>
+    </li>
+    Dropbox {{ dropbox_id }}
+{% endblock %}
+{% block content %}
+    <div class="flex flex-col ml-5 mr-5 max-w-full max-h-full ">
+        <div id="table" class="w-full overflow-x-auto  p-4">
+            <div id="btns" class="flex justify-end gap-2 mb-4">
+                <form action="{% url 'export' dropbox_id=dropbox_id %}"
+                      method="get"
+                      target="_blank"
+                      class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-gray-50  rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50">
+                    <button id="exportButton" class="cursor-pointer" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="w-5 h-5 opacity-75"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor"
+                             stroke-width="2">
+                            <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5" />
+                        </svg>
+                    </button>
+                </form>
+                <details class="relative group">
+                    <summary class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-gray-50 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 cursor-pointer list-none">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="w-5 h-5 opacity-75"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor"
+                             stroke-width="2">
+                            <line x1="4" y1="21" x2="4" y2="14"></line>
+                            <line x1="4" y1="10" x2="4" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12" y2="3"></line>
+                            <line x1="20" y1="21" x2="20" y2="16"></line>
+                            <line x1="20" y1="12" x2="20" y2="3"></line>
+                            <line x1="1" y1="14" x2="7" y2="14"></line>
+                            <line x1="9" y1="8" x2="15" y2="8"></line>
+                            <line x1="17" y1="16" x2="23" y2="16"></line>
+                        </svg>
+                    </summary>
+                    <!-- Dropdown menu -->
+                    <div class="absolute right-0 w-48 bg-white rounded-md shadow-lg z-10 mt-1">
+                        <div class="py-1">
+                            <a href="?filter=-date"
+                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sort by Date</a> <a href="?filter=date"
+    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sort by Date (Reverse)</a> <a href="?filter=-code39"
+    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sort by Code39</a> <a href="?filter=code39"
+    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sort by Code39 (Reverse)</a>
+                        </div>
+                    </div>
+                </details>
+            </div>
+            <!-- Table for medium screens and larger -->
+            <div class="hidden md:block">
+                <table class="w-full rounded-md shadow-lg min-w-full divide-y-2 divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr class="text-left">
+                            {% if filter_type == '-date' %}
+                                <th class="flex px-4 py-3 text-sm font-bold text-gray-900">
+                                    Date
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="size-5 opacity-75"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="#000000"
+                                         stroke-width="2"
+                                         stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M12 5v13M5 12l7 7 7-7" />
+                                    </svg>
+                                </th>
+                            {% elif filter_type == 'date' %}
+                                <th class="flex px-4 py-3 text-sm font-bold text-gray-900">
+                                    Date
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="size-5 opacity-75"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="#000000"
+                                         stroke-width="2"
+                                         stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M12 19V6M5 12l7-7 7 7" />
+                                    </svg>
+                                </th>
+                            {% else %}
+                                <th class="px-4 py-3 text-sm font-medium text-gray-900">Date</th>
+                            {% endif %}
+                            {% if filter_type == '-code39' %}
+                                <th class="flex px-4 py-3 text-sm font-bold text-gray-900">
+                                    Code39
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="size-5 opacity-75"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="#000000"
+                                         stroke-width="2"
+                                         stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M12 5v13M5 12l7 7 7-7" />
+                                    </svg>
+                                </th>
+                            {% elif filter_type == 'code39' %}
+                                <th class="flex px-4 py-3 text-sm font-bold text-gray-900">
+                                    Code39
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="size-5 opacity-75"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="#000000"
+                                         stroke-width="2"
+                                         stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M12 19V6M5 12l7-7 7 7" />
+                                    </svg>
+                                </th>
+                            {% else %}
+                                <th class="px-4 py-3 text-sm font-medium text-gray-900">Code39</th>
+                            {% endif %}
+                            <th class="px-4 py-3 text-sm font-medium text-gray-900">IMb</th>
+                            <th class="px-4 py-3 text-sm font-medium text-gray-900">Street</th>
+                            <th class="px-4 py-3 text-sm font-medium text-gray-900">City</th>
+                            <th class="px-4 py-3 text-sm font-medium text-gray-900">Zipcode</th>
+                            <th class="px-4 py-3 text-sm font-medium text-gray-900">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        {% for envelope in page_obj %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">{{ envelope.date }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">{{ envelope.code39 }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">{{ envelope.imb }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">{{ envelope.streetaddress }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">{{ envelope.city }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">{{ envelope.zipcode }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if envelope.status == 'Delivered' %} bg-green-100 text-green-800 {% elif envelope.status == 'In Transit' %} bg-blue-100 text-blue-800 {% elif envelope.status == 'Processing' %} bg-yellow-100 text-yellow-800 {% else %} bg-gray-100 text-gray-800 {% endif %}">
+                                        {{ envelope.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Card layout for small screens -->
+            <div class="grid grid-cols-1 gap-4 md:hidden">
+                {% for envelope in page_obj %}
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-2">
+                        <div class="flex justify-between">
+                            <div class="text-sm font-medium text-gray-600">Date</div>
+                            <div class="text-sm text-gray-900">{{ envelope.date }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="text-sm font-medium text-gray-600">Code 39</div>
+                            <div class="text-sm text-gray-900">{{ envelope.code39 }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="text-sm font-medium text-gray-600">IMb</div>
+                            <div class="text-sm text-gray-900">{{ envelope.imb }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="text-sm font-medium text-gray-600">Street</div>
+                            <div class="text-sm text-gray-900">{{ envelope.streetaddress }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="text-sm font-medium text-gray-600">City</div>
+                            <div class="text-sm text-gray-900">{{ envelope.city }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="text-sm font-medium text-gray-600">Zipcode</div>
+                            <div class="text-sm text-gray-900">{{ envelope.zipcode }}</div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm font-medium text-gray-600">Status</div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if envelope.status == 'Delivered' %} bg-green-100 text-green-800 {% elif envelope.status == 'In Transit' %} bg-blue-100 text-blue-800 {% elif envelope.status == 'Processing' %} bg-yellow-100 text-yellow-800 {% else %} bg-gray-100 text-gray-800 {% endif %}">
+                                {{ envelope.status }}
+                            </span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <!-- Pagination -->
+            {% if page_obj.paginator.num_pages > 1 %}
+                <div class="flex justify-center mt-6">
+                    <ul class="flex items-center gap-1 text-gray-900">
+                        {% if page_obj.has_previous %}
+                            <li>
+                                <a href="?page={{ page_obj.previous_page_number }}"
+                                   class="grid place-content-center w-8 h-8 rounded border border-gray-200 transition-colors hover:bg-gray-50 rtl:rotate-180"
+                                   aria-label="Previous page">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="w-4 h-4"
+                                         viewBox="0 0 20 20"
+                                         fill="currentColor">
+                                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="block w-8 h-8 rounded border border-indigo-600 bg-indigo-600 text-center leading-8 font-medium text-white">
+                                    {{ num }}
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li>
+                                    <a href="?page={{ num }}"
+                                       class="block w-8 h-8 rounded border border-gray-200 text-center leading-8 font-medium transition-colors hover:bg-gray-50">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li>
+                                <a href="?page={{ page_obj.next_page_number }}"
+                                   class="grid place-content-center w-8 h-8 rounded border border-gray-200 transition-colors hover:bg-gray-50 rtl:rotate-180"
+                                   aria-label="Next page">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="w-4 h-4"
+                                         viewBox="0 0 20 20"
+                                         fill="currentColor">
+                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
         </div>
-
-        <!-- Download into csv Button -->
-        <form action={% url 'export' dropbox_id=dropbox_id %} method="get" target="_blank"> 
-        <button
-          type="submit" class="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Download CSV
-        </button>
-        </form>
-
-<figure class="max-w-lg mt-5">
-    <img id="video" data-dropbox-id="{{dropbox_id}}" class="h-auto max-w-full rounded-lg" src="{% static 'images/stream_unavailable.png' %}" alt="image description">
-  <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Live Feed</figcaption>
-</figure>
-
-<div class=" max-w-full h-[300px]">
-<h3>Motion Recordings</h3>
-<ul class="w-100 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-
-        {% for name, size, time in media_files %}
-        <a href="{% url 'video' video_filename=name %}"><li class="w-full px-4 py-2 border-b border-gray-200 rounded-t-lg dark:border-gray-600">{{name}} {{size}} {{time}} </li></a>
-    {% endfor %}
-</ul>
-</div>
-
-      </div>
+        <div class="flex flex-wrap lg:flex-nowrap  h-max-full">
+            <div class="flex flex-col justify-center items-center m-3 w-full rounded-sm   ">
+                <img id="video"
+                     data-dropbox-id="{{ dropbox_id }}"
+                     class="h-auto w-auto rounded-lg"
+                     src=' data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M2%202l19.8%2019.8M15%2015.7V17a2%202%200%200%201-2%202H4a2%202%200%200%201-2-2V7c0-1.1.9-2%202-2h.3m5.4%200H13a2%202%200%200%201%202%202v3.3l1%201L22%207v10%22%2F%3E%3C%2Fsvg%3E '>
+                Live Feed
+            </div>
+            <div class="flex flex-col justify-center m-3 w-full">
+                <article class="flex items-center gap-4 m-3 rounded-sm border border-gray-200 bg-white p-6 sm:justify-between">
+                    <span class="rounded-full bg-blue-100 p-3 text-blue-600 sm:order-last">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="#000000"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </span>
+                <div>
+                    <p class="text-2xl font-medium text-gray-900">{{ num_scanned }}</p>
+                    <p class="text-sm text-gray-500">Total Scanned</p>
+                </div>
+            </article>
+            <article class="flex items-center gap-4 m-3 rounded-sm border border-gray-200 bg-white p-6 sm:justify-between">
+                <span class="rounded-full bg-blue-100 p-3 text-blue-600 sm:order-last">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="24"
+                         height="24"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="#000000"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+            </span>
+            <div>
+                <p class="text-2xl font-medium text-gray-900">{{ num_motion_detections }}</p>
+                <p class="text-sm text-gray-500">Motion Detected</p>
+            </div>
+        </article>
+        <article class="flex items-center gap-4 m-3 rounded-sm border border-gray-200 bg-white p-6 sm:justify-between">
+            <span class="rounded-full bg-blue-100 p-3 text-blue-600 sm:order-last">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="#000000"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </span>
+            <div>
+                <p class="text-2xl font-medium text-gray-900">0</p>
+                <p class="text-sm text-gray-500">Suspicious Activity</p>
+            </div>
+        </article>
     </div>
-
-    
+</div>
+<div class="flex flex-wrap lg:flex-nowrap  h-max-full">
+    <div class="flex justify-center items-center m-3 w-full">
+        <div class="mx-auto max-w-sm w-full bg-white rounded-lg shadow-md bg-gray-800 p-4 md:p-6">
+            <div id="column-chart">
+                <div>
+                    <h5 class="leading-none text-2xl font-bold text-gray-900 text-white pb-1"></h5>
+                    <p class="text-sm font-normal text-gray-500 text-gray-400">Envelopes Scanned (Last 7 Days)</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 items-center border-gray-200 border-t border-gray-700 justify-between">
+                <div class="flex justify-between items-center pt-5">
+                    <!-- Button -->
+                    <!-- <button id="dropdownDefaultButton" -->
+                    <!--         data-dropdown-toggle="lastDaysdropdown" -->
+                    <!--         data-dropdown-placement="bottom" -->
+                    <!--         class="text-sm font-medium text-gray-500 text-gray-400 hover:text-gray-900 text-center inline-flex items-center " -->
+                    <!--         type="button"> -->
+                    <!--     Last 7 days -->
+                    <!--     <svg class="w-2.5 m-2.5 ms-1.5" -->
+                    <!--          aria-hidden="true" -->
+                    <!--          xmlns="http://www.w3.org/2000/svg" -->
+                    <!--          fill="none" -->
+                    <!--          viewBox="0 0 10 6"> -->
+                    <!--         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" /> -->
+                    <!--     </svg> -->
+                    <!-- </button> -->
+                    <!-- Dropdown menu -->
+                    <!-- <div id="lastDaysdropdown" -->
+                    <!--      class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 bg-gray-700"> -->
+                    <!--     <ul class="py-2 text-sm text-gray-700 text-gray-200" -->
+                    <!--         aria-labelledby="dropdownDefaultButton"> -->
+                    <!--         <li> -->
+                    <!--             <a href="#" class="block px-4 py-2 hover:bg-gray-100 hover:bg-gray-600 ">Yesterday</a> -->
+                    <!--         </li> -->
+                    <!--         <li> -->
+                    <!--             <a href="#" class="block px-4 py-2 hover:bg-gray-100 hover:bg-gray-600 ">Today</a> -->
+                    <!--         </li> -->
+                    <!--         <li> -->
+                    <!--             <a href="#" class="block px-4 py-2 hover:bg-gray-100 hover:bg-gray-600 ">Last 7 days</a> -->
+                    <!--         </li> -->
+                    <!--         <li> -->
+                    <!--             <a href="#" class="block px-4 py-2 hover:bg-gray-100 hover:bg-gray-600 ">Last 30 days</a> -->
+                    <!--         </li> -->
+                    <!--         <li> -->
+                    <!--             <a href="#" class="block px-4 py-2 hover:bg-gray-100 hover:bg-gray-600 ">Last 90 days</a> -->
+                    <!--         </li> -->
+                    <!--     </ul> -->
+                    <!-- </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="flex flex-col justify-center m-3 w-full rounded-sm  border-gray-50 shadow-md bg-white border-2"></div> -->
+</div>
+{% endblock %}
+{% block scriptfooter %}
     <script src="{% static 'js/live_feed.js' %}" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
+    <script>
+        const options = {
+                colors: ["#1A56DB"],
+                series: {{chart_series|safe}},
+                chart: {
+                    type: "bar",
+                    height: "300px",
+                    fontFamily: "Inter, sans-serif",
+                    toolbar: { show: false },
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: "70%",
+                        borderRadiusApplication: "end",
+                        borderRadius: 8,
+                    },
+                },
+                tooltip: {
+                    shared: true,
+                    intersect: false,
+                    style: {
+                        fontFamily: "Inter, sans-serif",
+                    },
+                },
+                xaxis: {
+                    labels: {
+                        style: {
+                            fontFamily: "Inter, sans-serif",
+                            cssClass: 'text-xs font-normal fill-gray-500'
+                        }
+                    },
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                },
+                yaxis: { show: false },
+                grid: { 
+                    show: false,
+                    strokeDashArray: 4,
+                    padding: { left: 2, right: 2, top: -14 }
+                },
+                dataLabels: { enabled: false },
+                legend: { show: false },
+                stroke: {
+                    show: true,
+                    width: 0,
+                    colors: ["transparent"],
+                },
+            };
 
-    {% endblock %}
+
+if(document.getElementById("column-chart") && typeof ApexCharts !== 'undefined') {
+  const chart = new ApexCharts(document.getElementById("column-chart"), options);
+  chart.render();
+}
+
+
+    </script>
+{% endblock %}

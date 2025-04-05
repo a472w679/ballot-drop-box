@@ -96,7 +96,7 @@ class UDPVideoReceiver:
             )
 
             # save a video recording if motion is detected 
-            self.save_video_recording(motion_detected, jpeg_bytes, sender_id)
+            # self.save_video_recording(motion_detected, jpeg_bytes, sender_id)
 
     def jpeg_to_frame(self, jpeg_bytes):
         """

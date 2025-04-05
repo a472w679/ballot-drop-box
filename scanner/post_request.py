@@ -45,3 +45,18 @@ def send_data(data : dict) -> bool:
         print(f"Error sending data: {e}")
         return False
 
+# DEBUG test 
+# for i in range(10): 
+#     send_data(
+#             {
+#                 "dropboxid" : 1, 
+#                 "date": f"{date.today()}", 
+#                 "imb": "", 
+#                 "code39": f"ABC-122{i}",
+#                 "streetaddress": "", 
+#                 "city": "", 
+#                 "zipcode": "",  
+#                 "status": "Valid"
+#             }
+#     )
+
