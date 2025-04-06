@@ -117,8 +117,7 @@ def dashboard(request, dropbox_id):
     'dropbox_id': dropbox_id,
     'filter_type': filter_by,
     'chart_series': [{
-            'name': 'Envelopes Submitted',
-            'color': '#1A56DB',
+            'name': 'Envelopes Scanned',
             'data': series_data
         }],
   }
