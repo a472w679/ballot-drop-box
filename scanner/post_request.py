@@ -45,18 +45,21 @@ def send_data(data : dict) -> bool:
         print(f"Error sending data: {e}")
         return False
 
-# DEBUG test 
-# for i in range(10): 
+# debug 
+# from datetime import datetime, timedelta
+# delta = timedelta(days=1)
+# for i in range(7): 
+#     date = datetime(2025, 3, 31) + i * delta
 #     send_data(
 #             {
 #                 "dropboxid" : 1, 
-#                 "date": f"{date.today()}", 
+#                 "date": f"{date.strftime('%Y-%m-%d')}", 
 #                 "imb": "", 
-#                 "code39": f"ABC-122{i}",
+#                 "code39": f"ABB-12{i}1",
 #                 "streetaddress": "", 
 #                 "city": "", 
 #                 "zipcode": "",  
 #                 "status": "Valid"
 #             }
 #     )
-
+#

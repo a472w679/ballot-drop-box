@@ -18,7 +18,6 @@ from collections import deque
 from datetime import datetime
 from io import BytesIO
 
-import cv2
 import numpy as np
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer

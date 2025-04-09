@@ -53,12 +53,14 @@
                     <div class="absolute left-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg overflow-hidden scale-0 origin-top-left transition-transform peer-checked:scale-100 ">
                         <div class="p-4">
                             <ul class="space-y-3">
-                                <li class="flex items-center gap-3 pb-2 border-b border-gray-100">
-                                    <img src="{% static 'images/logo.png' %}"
-                                         alt="Vote Election Icon"
-                                         class="size-5">
-                                    <span class="text-sm font-medium">Ballot Box</span>
-                                </li>
+                                <a href="{% url 'home' %}">
+                                    <li class="flex items-center gap-3 pb-2 border-b border-gray-100">
+                                        <img src="{% static 'images/logo.png' %}"
+                                             alt="Vote Election Icon"
+                                             class="size-5">
+                                        <span class="text-sm font-medium">Ballot Box</span>
+                                    </li>
+                                </a>
                                 <li>
                                     <a href="{% url 'list' %}"
                                        class="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-2 rounded-lg">
@@ -135,15 +137,12 @@
                         </div>
                     </div>
                 </div>
-                <a class="block text-teal-600" href="#">
-                    <span class="sr-only">Home</span>
-                </a>
                 <div class="flex items-center ml-auto justify-end md:justify-between">
                     <div class="flex justify-center gap-4">
                         <div class="sm:flex sm:gap-4">
-                            <a class="rounded-md bg-gray-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-teal-700"
+                            <a class="rounded-md bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-red-700"
                                href="#">Login</a>
-                            <a class="rounded-md bg-white-100 px-5 py-2.5 text-sm font-medium text-black-600 transition hover:text-teal-600/75 sm:block"
+                            <a class="rounded-md bg-white-100 px-5 py-2.5 text-sm font-medium text-black-600 transition hover:text-red-600/75 sm:block"
                                href="#">Register</a>
                         </div>
                     </div>
@@ -155,11 +154,13 @@
             <div class="w-16 border-2 border-gray-200 bg-white z-1 flex-col justify-between hidden md:flex">
                 <div>
                     <div class="inline-flex size-16 items-center justify-center">
-                        <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
-                            <img src="{% static 'images/logo.png' %}"
-                                 alt="Vote Election Icon"
-                                 class="size-7">
-                        </span>
+                        <a href="{% url 'home' %}">
+                            <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
+                                <img src="{% static 'images/logo.png' %}"
+                                     alt="Vote Election Icon"
+                                     class="size-7">
+                            </span>
+                        </a>
                     </div>
                     <div class="border-t border-gray-100">
                         <div class="px-2">

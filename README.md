@@ -32,6 +32,7 @@ pip install -r requirements.txt
 ```
 python3 dropbox/manage.py makemigrations 
 python3 dropbox/manage.py migrate  
+python3 dropbox/manage.py collectstatic  
 ```
 5) To test and make sure everything is working,  `python3 dropbox/manage.py runserver 0.0.0.0:8000`
 6) copy the host url into your browser 
