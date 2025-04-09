@@ -17,7 +17,7 @@ import numpy as np
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import Count
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
 from rest_framework import status
@@ -25,6 +25,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from .forms import AccountLogin, AccountRegister
 from .models import EnvelopeScan
 from .serializers import EnvelopeSerializer
 
@@ -131,6 +132,51 @@ def video(request, video_filename):
         'video_filename': video_filename,
         'path': f'{settings.MEDIA_URL}{video_filename}'
     }
+    return HttpResponse(template.render(context, request))
+
+def login(request):
+    context = {
+        "error_message": "" 
+    }
+    if request.method == 'POST': 
+        form = AccountLogin(request.POST)
+        if form.is_valid(): 
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+
+            # if password != "test":  # TODO: 
+            #     context["error_message"] = "Password isn't correct!"
+            return HttpResponseRedirect("/home/")
+
+    else: 
+        form = AccountLogin()
+
+    template = loader.get_template('login.html')
+    return HttpResponse(template.render(context, request))
+
+def register(request): 
+    template = loader.get_template('register.html')
+    context = {
+        "error_message": "",
+    }
+    if request.method == 'POST': 
+        form = AccountRegister(request.POST)
+        if form.is_valid(): 
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+            confirm_password = form.cleaned_data["confirm_password"]
+
+            if password == confirm_password: 
+                return HttpResponseRedirect("/home/")
+            else: 
+                context["error_message"] = "Passwords do not match!"
+    else: 
+        form = AccountRegister()
+    return HttpResponse(template.render(context, request))
+
+def account(request): 
+    template = loader.get_template('account.html')
+    context = {}
     return HttpResponse(template.render(context, request))
 
 def export(request, dropbox_id):  # downloads database in a csv 
