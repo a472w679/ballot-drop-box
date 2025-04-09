@@ -15,6 +15,9 @@ from datetime import datetime, timedelta
 
 import numpy as np
 from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect
@@ -36,17 +39,20 @@ def home(request):
   context = {}
   return HttpResponse(template.render(context, request))
 
+@login_required
 def map(request):
   template = loader.get_template('map.html')
   context = {}
   return HttpResponse(template.render(context, request))
 
+@login_required
 def dropbox_list(request):
   template = loader.get_template('dropbox_list.html')
   unique_dropbox_ids = EnvelopeScan.objects.order_by('dropboxid').values_list('dropboxid', flat=True).distinct()
   context = {"dropbox_ids": unique_dropbox_ids}
   return HttpResponse(template.render(context, request))
 
+@login_required
 def video_list(request): 
   template = loader.get_template('video_list.html')
 
@@ -67,6 +73,7 @@ def video_list(request):
     context = {"media_files": media_files}
   return HttpResponse(template.render(context, request))
 
+@login_required
 def dashboard(request, dropbox_id):
   filter_by = request.GET.get('filter') 
   if not filter_by: 
@@ -125,6 +132,7 @@ def dashboard(request, dropbox_id):
 
   return HttpResponse(template.render(context, request))
 
+@login_required
 def video(request, video_filename): 
     template = loader.get_template('video.html')
 
@@ -134,7 +142,7 @@ def video(request, video_filename):
     }
     return HttpResponse(template.render(context, request))
 
-def login(request):
+def account_login(request):
     context = {
         "error_message": "" 
     }
@@ -144,9 +152,12 @@ def login(request):
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
 
-            # if password != "test":  # TODO: 
-            #     context["error_message"] = "Password isn't correct!"
-            return HttpResponseRedirect("/home/")
+            user_authenticated = authenticate(username=email, email=email, password=password)
+            if user_authenticated:
+                login(request, user_authenticated)  # creates session
+                return HttpResponseRedirect("/home/")
+            else: 
+                context["error_message"] = "Account information incorrect!"
 
     else: 
         form = AccountLogin()
@@ -167,6 +178,7 @@ def register(request):
             confirm_password = form.cleaned_data["confirm_password"]
 
             if password == confirm_password: 
+                user = User.objects.create_user(username=email, email=email, password=password) # save user to database 
                 return HttpResponseRedirect("/home/")
             else: 
                 context["error_message"] = "Passwords do not match!"
@@ -174,11 +186,13 @@ def register(request):
         form = AccountRegister()
     return HttpResponse(template.render(context, request))
 
+@login_required
 def account(request): 
     template = loader.get_template('account.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
+@login_required
 def export(request, dropbox_id):  # downloads database in a csv 
     response = HttpResponse(content_type = 'text/csv')
     writer = csv.writer(response)
@@ -190,6 +204,14 @@ def export(request, dropbox_id):  # downloads database in a csv
     response['Content-Disposition'] = 'attachment; filename="data.csv"'
 
     return response 
+
+def account_logout(request): 
+    logout(request)
+    template = loader.get_template('login.html')
+    context = {
+        "error_message": "Account logged out"
+    }
+    return HttpResponse(template.render(context, request))
 
 @api_view(['POST'])
 def receive_sensor_data(request):

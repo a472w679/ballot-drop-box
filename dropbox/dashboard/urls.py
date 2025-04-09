@@ -14,9 +14,10 @@ urlpatterns = [
     path('videos/<str:video_filename>', views.video, name='video'),
     path('video-list/', views.video_list, name='video-list'),
     path('map', views.map, name='map'),
-    path('register/', views.register, name='register'),
-    path('login/', views.login, name='login'),
-    path('account/', views.account, name='account'),
+    path('accounts/register/', views.register, name='register'),
+    path('accounts/login/', views.account_login, name='login'),
+    path('accounts/logout/', views.account_logout, name='logout'),
+    path('accounts/', views.account, name='account'),
 ]
 
 
