@@ -20,12 +20,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Count
-from django.http import HttpResponse, HttpResponseRedirect
+from django.db.models.functions import JSONObject
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.template import loader
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
 # rest-api
-from rest_framework.decorators import api_view
+from rest_framework.decorators import (api_view, authentication_classes,
+                                       permission_classes)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .forms import AccountLogin, AccountRegister
@@ -146,13 +151,20 @@ def account_login(request):
     context = {
         "error_message": "" 
     }
+
+    access_rejected = request.GET.get("next")
+    if access_rejected:  # the user tried to access login required pages 
+        context["error_message"] = "Login or register to access that page"
+
     if request.method == 'POST': 
         form = AccountLogin(request.POST)
         if form.is_valid(): 
+            username = form.cleaned_data["username"]
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
 
-            user_authenticated = authenticate(username=email, email=email, password=password)
+            user_authenticated = authenticate(username=username, email=email, password=password)
+            print(username, email, password, user_authenticated) 
             if user_authenticated:
                 login(request, user_authenticated)  # creates session
                 return HttpResponseRedirect("/home/")
@@ -166,20 +178,32 @@ def account_login(request):
     return HttpResponse(template.render(context, request))
 
 def register(request): 
-    template = loader.get_template('register.html')
     context = {
-        "error_message": "",
+        "error_message": "" 
     }
+
+    access_rejected = request.GET.get("next")
+    if access_rejected:  # the user tried to access login required pages 
+        context["error_message"] = "Login or register to access that page"
+
+    template = loader.get_template('register.html')
     if request.method == 'POST': 
         form = AccountRegister(request.POST)
         if form.is_valid(): 
+            username = form.cleaned_data["username"]
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
             confirm_password = form.cleaned_data["confirm_password"]
 
             if password == confirm_password: 
-                user = User.objects.create_user(username=email, email=email, password=password) # save user to database 
-                return HttpResponseRedirect("/home/")
+                user_exists = User.objects.filter(username=username).exists()
+                email_exists = User.objects.filter(email=email).exists()
+                if user_exists or email_exists: 
+                    context["error_message"] = "User already exists with those credentials"
+                else: 
+                    user = User.objects.create_user(username=username, email=email, password=password) # save user to database 
+                    login(request, user)
+                    return HttpResponseRedirect("/home/")
             else: 
                 context["error_message"] = "Passwords do not match!"
     else: 
@@ -207,13 +231,13 @@ def export(request, dropbox_id):  # downloads database in a csv
 
 def account_logout(request): 
     logout(request)
-    template = loader.get_template('login.html')
-    context = {
-        "error_message": "Account logged out"
-    }
+    template = loader.get_template('home.html')
+    context = {}
     return HttpResponse(template.render(context, request))
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def receive_sensor_data(request):
     serializer = EnvelopeSerializer(data=request.data)
     if serializer.is_valid(): # makes sure post request is valid 
@@ -224,5 +248,11 @@ def receive_sensor_data(request):
 
     res = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return res
+
+@api_view(['GET'])
+@login_required
+def obtain_auth_token(request): 
+    token, _ = Token.objects.get_or_create(user=request.user)
+    return JsonResponse({"token": token.key})
 
 

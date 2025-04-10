@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
+from rest_framework.authtoken import views
 
 from . import views
 
@@ -18,6 +19,7 @@ urlpatterns = [
     path('accounts/login/', views.account_login, name='login'),
     path('accounts/logout/', views.account_logout, name='logout'),
     path('accounts/', views.account, name='account'),
+    path('api-token-auth/', views.obtain_auth_token)
 ]
 
 

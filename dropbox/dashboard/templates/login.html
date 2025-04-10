@@ -38,7 +38,16 @@
                     <form class="space-y-4 md:space-y-6" method="post" action="#">
                         {% csrf_token %}
                         <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">Your email</label>
+                            <label for="username" class="block mb-2 text-sm font-medium text-gray-900 ">Username</label>
+                            <input type="username"
+                                   name="username"
+                                   id="username"
+                                   class="bg-gray-50 border border-gray text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5  border-gray-600 placeholder-gray-400  focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="my_username"
+                                   required="">
+                        </div>
+                        <div>
+                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">Email</label>
                             <input type="email"
                                    name="email"
                                    id="email"
@@ -61,15 +70,14 @@
                                     <input id="remember"
                                            aria-describedby="remember"
                                            type="checkbox"
-                                           class="w-4 h-4 border border-gray-300 rounded  focus:ring-3 focus:ring-primary-300  border-gray-600 focus:ring-primary-600 ring-offset-gray-800"
-                                           required="">
+                                           class="w-4 h-4 border border-gray-300 rounded  focus:ring-3 focus:ring-primary-300  border-gray-600 focus:ring-primary-600 ring-offset-gray-800">
                                 </div>
                                 <div class="ml-3 text-sm">
                                     <label for="remember" class="text-gray-500 text-gray-300">Remember me</label>
                                 </div>
                             </div>
-                            <a href="#"
-                               class="text-sm font-medium text-primary-600 hover:underline text-primary-500">Forgot password?</a>
+                            <!-- <a href="#" -->
+                            <!--    class="text-sm font-medium text-primary-600 hover:underline text-primary-500">Forgot password?</a> -->
                         </div>
                         <button type="submit"
                                 value="Submit"
@@ -77,8 +85,8 @@
                             Sign in
                         </button>
                         <p class="text-sm font-light text-gray-500 text-gray-400">
-                            Don’t have an account yet? <a href="#"
-    class="font-medium text-primary-600 hover:underline text-primary-500">Sign up</a>
+                            Don’t have an account yet? <a href="{% url 'register' %}"
+    class="font-medium text-primary-600 hover:underline text-primary-500">Register</a>
                         </p>
                     </form>
                     <div class="text-red-600 flex justify-center">{{ error_message }}</div>

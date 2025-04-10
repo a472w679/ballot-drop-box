@@ -77,16 +77,21 @@ cp scanning/config.yaml.secret scanning/config.yaml
 ```yaml
 prod: false 
 ```
-- set prod to false if testing locally, true if not 
+- setting prod to true means that the site is using https
 
-#### server
+#### server and token authorization
 ```yaml
 server: 
   host: "127.0.0.1"    # ip the django server is hosted on 
   port: 8000           # port the django server is on 
   live_feed_port: 5005 # what port the live feed is connected to
+  authentication: "your-auth-token-here" 
 ```
 - the host can be replaced with the ec2 instance ip if not testing locally 
+
+You can obtain an `auth-token` by logging into an account on the site and accessing `/api-token-auth/`
+- this should return a json with the token key
+- authentication should be the token key 
 
 #### dropbox 
 Enter correct dropbox id
