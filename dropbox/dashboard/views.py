@@ -242,6 +242,17 @@ def account_logout(request):
     context = {}
     return HttpResponse(template.render(context, request))
 
+def notfound(request): 
+    template = loader.get_template('404.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+def servererror(request): 
+    template = loader.get_template('500.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])

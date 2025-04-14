@@ -19,7 +19,9 @@ urlpatterns = [
     path('accounts/login/', views.account_login, name='login'),
     path('accounts/logout/', views.account_logout, name='logout'),
     path('accounts/', views.accounts, name='accounts'),
-    path('api-token-auth/<str:username>', views.obtain_auth_token, name='obtain_auth_token')
+    path('api-token-auth/<str:username>', views.obtain_auth_token, name='obtain_auth_token'),
+    path('404/', views.notfound, name='notfound'),
+    path('500/', views.servererror, name='servererror')
 ]
 
 

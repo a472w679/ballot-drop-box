@@ -1,0 +1,29 @@
+<!-- // Name of code artifact: 500.html -->
+<!-- // Brief description of what the code does: 404 not found template for the front end -->
+<!-- // Programmer’s name: Xavier Ruyle -->
+<!-- // Date the code was created: 04/20/25 -->
+<!-- // Preconditions: base.html -->
+<!-- // Postconditions: N/A -->
+<!-- // Return values or types, and their meanings: N/A -->
+<!-- // Error and exception condition values or types that can occur, and their meanings: N/A -->
+<!-- // Side effects: -->
+<!-- // Invariants: N/A -->
+{% extends 'base.html' %} {% load static %} {% block title %}Home{% endblock %}
+{% block breadcrumb %}
+<li
+  class="group relative flex justify-center rounded-sm pt-6 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+></li>
+{% endblock %} {% block content %}
+<section class="mx-auto flex-1 flex items-center justify-center">
+  <div class="w-full max-w-full px-4 py-8 sm:px-6 lg:px-8">
+    <div class="max-w-prose text-center">
+      <h1 class="text-4xl font-bold text-gray-900 sm:text-5xl">
+        <strong class="text-red-600">500</strong>
+      </h1>
+      <p class="mt-4 text-base text-pretty text-gray-700 sm:text-lg/relaxed">
+        Page not found
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}
