@@ -89,9 +89,8 @@ server:
 ```
 - the host can be replaced with the ec2 instance ip if not testing locally 
 
-You can obtain an `auth-token` by logging into an account on the site and accessing `/api-token-auth/`
-- this should return a json with the token key
-- authentication should be the token key 
+You can obtain an `auth-token` by logging into an account on the site and accessing `accounts/`
+- click on one of the accounts' API Key button to get an auth token 
 
 #### dropbox 
 Enter correct dropbox id
