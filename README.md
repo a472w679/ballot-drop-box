@@ -158,6 +158,24 @@ python3 dropbox/manage.py runserver 0.0.0.0:8000
 ```
 
 ### AWS EC2 Setup 
+
+This was tested on a debian EC2  instance 
+#### Security Groups 
+Django server 
+- CUSTOM TCP port range 8000
+
+Redis Server 
+- CUSTOM TCP port range 6379
+
+Incoming Live Feed
+- CUSTOM TCP port range 5005 
+
+CIDR: 0.0.0.0/0
+
+### EC2 Instance Configuration
+SSH into the instance using security.pem
+- `ssh -i "security.pem" admin@ec2-domain`
+
 1) Install necessary tools like git
 2) Clone this repository 
 3) Install and enable redis
@@ -179,24 +197,81 @@ python3 dropbox/manage.py makemigrations
 python3 dropbox/manage.py migrate  
 ```
 
-5) Start server 
+Configure `.dropbox/dropbox/settings.py`
+```python
+DEBUG = False  # set debug to false 
+ALLOWED_HOSTS = ["ec2-server-ip"]
 ```
-nohup python3 dropbox/manage.py runserver 0.0.0.0:8000 > django.log 2>&1 &
+
+5) Setup nginx  
+```
+sudo apt install nginx
+sudo systemctl stop nginx
+sudo rm /etc/nginx/sites-enabled/default
+
 ```
 
-#### Add Security Groups 
-Django server 
-- CUSTOM TCP port range 8000
+`sudo nano /etc/nginx/sites-available/django.conf`
+```
+server {
+	   listen 80;
+	       server_name ec2-server-ip;  
+		   location / {
+               proxy_pass http://127.0.0.1:8000;
+               proxy_http_version 1.1;
+               proxy_set_header Upgrade $http_upgrade;
+               proxy_set_header Connection "upgrade";
+               proxy_set_header Host $host;
+               proxy_set_header X-Real-IP $remote_addr;
+               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			}
+		}
+```
 
-Redis Server 
-- CUSTOM TCP port range 6379
+```
+sudo ln -s /etc/nginx/sites-available/django.conf /etc/nginx/sites-enabled/
+sudo nginx -t  # Test config
+sudo systemctl start nginx
+```
 
-Incoming Live Feed
-- CUSTOM TCP port range 5005 
+6) Make systemd services 
+```
+[Unit]
+Description=Django RunServer
+After=network.target
 
-CIDR: 0.0.0.0/0
+[Service]
+User=admin
+Group=www-data
+WorkingDirectory=/home/admin/dev/ballot-drop-box/dropbox
+ExecStart=daphne -b 0.0.0.0 -p 8000 dropbox.asgi:application
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```
+[Unit]
+Description=Django Start UDP Receiver
+After=network.target
+
+[Service]
+User=admin
+Group=www-data
+WorkingDirectory=/home/admin/dev/ballot-drop-box
+ExecStart=/home/admin/dev/ballot-drop-box/.venv/bin/python3 dropbox/manage.py start_udp_receiver
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
 
 ## FAQ 
+### Your documentation is confusing 
+Sorry, there are a lot of moving parts 
+
 ### Where is the web app?
 `./dropbox/dashboard`
 

@@ -12,6 +12,7 @@
 import csv
 import os
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import numpy as np
 from django.conf import settings
@@ -63,7 +64,7 @@ def video_list(request):
 
   # getting media files from static/media 
   media_files = []
-  media_dir = os.path.join(os.path.dirname(__file__), 'media')
+  media_dir = os.path.join(Path(__file__).resolve().parent.parent, "media")
   for filename in os.listdir(media_dir): 
     if filename.endswith('.webm'): 
             full_path = os.path.join(media_dir, filename)
@@ -87,7 +88,9 @@ def dashboard(request, dropbox_id):
   envelope_data = EnvelopeScan.objects.all().filter(dropboxid=dropbox_id).order_by(f'{filter_by}')
 
   num_scanned = len(envelope_data)
-  media_dir = os.path.join(os.path.dirname(__file__), 'media')
+  media_dir = os.path.join(Path(__file__).resolve().parent.parent, "media") 
+
+
   num_motion_detections = len([x for x in os.listdir(media_dir) if x.endswith(".webm") and x.startswith(f"{dropbox_id}")])
 
 
@@ -238,6 +241,17 @@ def account_logout(request):
     template = loader.get_template('home.html')
     context = {}
     return HttpResponse(template.render(context, request))
+
+def notfound(request): 
+    template = loader.get_template('404.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+def servererror(request): 
+    template = loader.get_template('500.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
