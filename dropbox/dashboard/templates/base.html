@@ -19,301 +19,458 @@
 <!-- // Side effects: -->
 <!-- // Invariants: N/A -->
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" type="image/x-icon" href="{% static '/images/logo.png' %}">
-        <title>
-            {% block title %}{% endblock %}
-        </title>
-        {% block head %}{% endblock %}
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-        {% block headscript %}{% endblock %}
-    </head>
-    <body class="flex flex-col min-h-screen bg-gray-100 overflow-x-hidden">
-        <header class="bg-white">
-            <div class="mx-auto flex h-16 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8">
-                <!-- Mobile menu dropdown with checkbox hack -->
-                <div class="relative md:hidden z-10">
-                    <input type="checkbox" id="mobile-menu-toggle" class="hidden peer" />
-                    <label for="mobile-menu-toggle"
-                           class="block rounded-sm bg-gray-100 p-2.5 text-gray-600 transition hover:text-gray-600/75 cursor-pointer">
-                        <span class="sr-only">Toggle menu</span>
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             class="size-5"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke="currentColor"
-                             stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </label>
-                    <!-- Dropdown Menu (hidden by default, shown when checkbox is checked) -->
-                    <div class="absolute left-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg overflow-hidden scale-0 origin-top-left transition-transform peer-checked:scale-100 ">
-                        <div class="p-4">
-                            <ul class="space-y-3">
-                                <a href="{% url 'home' %}">
-                                    <li class="flex items-center gap-3 pb-2 border-b border-gray-100">
-                                        <img src="{% static 'images/logo.png' %}"
-                                             alt="Vote Election Icon"
-                                             class="size-5">
-                                        <span class="text-sm font-medium">Ballot Box</span>
-                                    </li>
-                                </a>
-                                <li>
-                                    <a href="{% url 'list' %}"
-                                       class="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-2 rounded-lg">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             class="size-5 opacity-75"
-                                             fill="none"
-                                             viewBox="0 0 24 24"
-                                             stroke="currentColor"
-                                             stroke-width="2">
-                                            <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5" />
-                                            <path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z" />
-                                        </svg>
-                                        <span>Dropboxes</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'map' %}"
-                                       class="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-2 rounded-lg">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             class="size-5 opacity-75"
-                                             fill="none"
-                                             viewBox="0 0 24 24"
-                                             stroke="currentColor"
-                                             stroke-width="2">
-                                            <circle cx="12" cy="10" r="3" />
-                                            <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" />
-                                        </svg>
-                                        <span>Map</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'video-list' %}"
-                                       class="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-2 rounded-lg">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             class="size-5 opacity-75"
-                                             fill="none"
-                                             viewBox="0 0 24 24"
-                                             stroke="currentColor"
-                                             stroke-width="2">
-                                            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line>
-                                        </svg>
-                                        <span>Recordings</span>
-                                    </a>
-                                </li>
-                                {% if user.is_authenticated %}
-                                    <li>
-                                        <a href="#"
-                                           class="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-2 rounded-lg">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                 class="size-5 opacity-75"
-                                                 fill="none"
-                                                 viewBox="0 0 24 24"
-                                                 stroke="currentColor"
-                                                 stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>
-                                            <span>Account</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'logout' %}"
-                                           class="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-2 rounded-lg">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                 class="size-5 opacity-75"
-                                                 fill="none"
-                                                 viewBox="0 0 24 24"
-                                                 stroke="currentColor"
-                                                 stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                            </svg>
-                                            <span>Logout</span>
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center ml-auto justify-end md:justify-between">
-                    <div class="flex justify-center gap-4">
-                        <div class="sm:flex sm:gap-4">
-                            {% if user.is_authenticated %}
-                                <div class="text-sm text-gray-500 flex items-center">Logged in as {{ user }}</div>
-                            {% else %}
-                                <a class="rounded-md bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-red-700"
-                                   href="{% url 'login' %}">Login</a>
-                                <a class="rounded-md bg-white-100 px-5 py-2.5 text-sm font-medium text-black-600 transition hover:text-red-600/75 sm:block"
-                                   href="{% url 'register' %}">Register</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static '/images/logo.png' %}"
+    />
+    <title>{% block title %}{% endblock %}</title>
+    {% block head %}{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    {% block headscript %}{% endblock %}
+  </head>
+  <body class="flex flex-col min-h-screen bg-gray-100 overflow-x-hidden">
+    <header class="bg-white">
+      <div
+        class="mx-auto flex h-16 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8"
+      >
+        <!-- Mobile menu dropdown with checkbox hack -->
+        <div class="relative md:hidden z-10">
+          <input type="checkbox" id="mobile-menu-toggle" class="hidden peer" />
+          <label
+            for="mobile-menu-toggle"
+            class="block rounded-sm bg-gray-100 p-2.5 text-gray-600 transition hover:text-gray-600/75 cursor-pointer"
+          >
+            <span class="sr-only">Toggle menu</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="size-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </label>
+          <!-- Dropdown Menu (hidden by default, shown when checkbox is checked) -->
+          <div
+            class="absolute left-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg overflow-hidden scale-0 origin-top-left transition-transform peer-checked:scale-100"
+          >
+            <div class="p-4">
+              <ul class="space-y-3">
+                <a href="{% url 'home' %}">
+                  <li
+                    class="flex items-center gap-3 pb-2 border-b border-gray-100"
+                  >
+                    <img
+                      src="{% static 'images/logo.png' %}"
+                      alt="Vote Election Icon"
+                      class="size-5"
+                    />
+                    <span class="text-sm font-medium">Ballot Box</span>
+                  </li>
+                </a>
+                <li>
+                  <a
+                    href="{% url 'list' %}"
+                    class="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-2 rounded-lg"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 opacity-75"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5" />
+                      <path
+                        d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z"
+                      />
+                    </svg>
+                    <span>Dropboxes</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="{% url 'map' %}"
+                    class="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-2 rounded-lg"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 opacity-75"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="10" r="3" />
+                      <path
+                        d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"
+                      />
+                    </svg>
+                    <span>Map</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="{% url 'video-list' %}"
+                    class="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-2 rounded-lg"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 opacity-75"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <rect
+                        x="2"
+                        y="2"
+                        width="20"
+                        height="20"
+                        rx="2.18"
+                        ry="2.18"
+                      ></rect>
+                      <line x1="7" y1="2" x2="7" y2="22"></line>
+                      <line x1="17" y1="2" x2="17" y2="22"></line>
+                      <line x1="2" y1="12" x2="22" y2="12"></line>
+                      <line x1="2" y1="7" x2="7" y2="7"></line>
+                      <line x1="2" y1="17" x2="7" y2="17"></line>
+                      <line x1="17" y1="17" x2="22" y2="17"></line>
+                      <line x1="17" y1="7" x2="22" y2="7"></line>
+                    </svg>
+                    <span>Recordings</span>
+                  </a>
+                </li>
+                {% if user.is_authenticated %}
+                <li>
+                  <a
+                    href="{% url 'accounts' %}"
+                    class="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-2 rounded-lg"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 opacity-75"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                    <span>Accounts</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="{% url 'logout' %}"
+                    class="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-2 rounded-lg"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 opacity-75"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
+                    <span>Logout</span>
+                  </a>
+                </li>
+                {% endif %}
+              </ul>
             </div>
-        </header>
-        <div class="flex flex-1 ">
-            <!-- Desktop sidebar - hidden on mobile -->
-            <div class="w-16 border-2 border-gray-200 bg-white z-1 flex-col justify-between hidden md:flex">
-                <div>
-                    <div class="inline-flex size-16 items-center justify-center">
-                        <a href="{% url 'home' %}">
-                            <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
-                                <img src="{% static 'images/logo.png' %}"
-                                     alt="Vote Election Icon"
-                                     class="size-7">
-                            </span>
-                        </a>
-                    </div>
-                    <div class="border-t border-gray-100">
-                        <div class="px-2">
-                            <ul class="space-y-1 border-t border-gray-100 pt-4">
-                                <li>
-                                    <a href="{% url 'list' %}"
-                                       class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             class="size-5 opacity-75"
-                                             fill="none"
-                                             viewBox="0 0 24 24"
-                                             stroke="currentColor"
-                                             stroke-width="2">
-                                            <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5" />
-                                            <path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z" />
-                                        </svg>
-                                        <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
-                                            Dropboxes
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'map' %}"
-                                       class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             class="size-5 opacity-75"
-                                             fill="none"
-                                             viewBox="0 0 24 24"
-                                             stroke="currentColor"
-                                             stroke-width="2">
-                                            <circle cx="12" cy="10" r="3" />
-                                            <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" />
-                                        </svg>
-                                        <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
-                                            Map
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'video-list' %}"
-                                       class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             class="size-5 opacity-75"
-                                             fill="none"
-                                             viewBox="0 0 24 24"
-                                             stroke="currentColor"
-                                             stroke-width="2">
-                                            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line>
-                                        </svg>
-                                        <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
-                                            Recordings
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             class="size-5 opacity-75"
-                                             fill="none"
-                                             viewBox="0 0 24 24"
-                                             stroke="currentColor"
-                                             stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                        </svg>
-                                        <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
-                                            Account
-                                        </span>
-                                    </a>
-                                </li>
-                                {% if user.is_authenticated %}
-                                    <li>
-                                        <a href="{% url 'logout' %}"
-                                           class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                 class="size-5 opacity-75"
-                                                 fill="none"
-                                                 viewBox="0 0 24 24"
-                                                 stroke="currentColor"
-                                                 stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                            </svg>
-                                            <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
-                                                Logout
-                                            </span>
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="border-t border-gray-100 bg-white p-2"></div>
-            </div>
-            <div class="flex flex-col flex-1 w-full">
-                <nav aria-label="Breadcrumb" class="ml-4 md:ml-10 mt-5">
-                    <ol class="flex items-center gap-1 text-sm text-gray-700">
-                        <li>
-                            <a href="{% url 'home' %}"
-                               class="block transition-colors hover:text-gray-900"
-                               aria-label="Home">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                     class="size-4 opacity-75"
-                                     fill="none"
-                                     viewBox="0 0 24 24"
-                                     stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                </svg>
-                            </a>
-                        </li>
-                        <li class="rtl:rotate-180">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="size-4"
-                                 viewBox="0 0 20 20"
-                                 fill="currentColor">
-                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                            </svg>
-                        </li>
-                        <li>
-                            {% block breadcrumb %}{% endblock %}
-                        </li>
-                    </ol>
-                </nav>
-                <main class="flex-1 flex flex-col">
-                    {% block content %}{% endblock %}
-                </main>
-            </div>
+          </div>
         </div>
-        <footer class="bg-white border-t border-gray-200">
-            <div class="px-4 py-6 sm:px-6 lg:px-8">
-                <div class="sm:flex sm:justify-between">
-                    <p class="text-xs text-gray-500">&copy; 2025. KU Capstone Team 40 - All rights reserved.</p>
-                    <ul class="mt-4 flex flex-wrap justify-start gap-4 text-xs sm:mt-0 lg:justify-end">
-                        <li>
-                            <a href="#" class="text-gray-500 transition hover:opacity-75">Terms & Conditions</a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-gray-500 transition hover:opacity-75">Privacy Policy</a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-gray-500 transition hover:opacity-75">Cookies</a>
-                        </li>
-                    </ul>
-                </div>
+        <div class="flex items-center ml-auto justify-end md:justify-between">
+          <div class="flex justify-center gap-4">
+            <div class="sm:flex sm:gap-4">
+              {% if user.is_authenticated %}
+              <div class="text-sm text-gray-500 flex items-center">
+                Logged in as {{ user }}
+              </div>
+              <a
+                class="rounded-md bg-white-100 px-5 py-2.5 text-sm font-medium border border-gray-100 text-black-600 transition hover:text-red-600/75 sm:block"
+                href="{% url 'register' %}"
+                >Create Account</a
+              >
+              {% else %}
+              <a
+                class="rounded-md bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-red-700"
+                href="{% url 'login' %}"
+                >Login</a
+              >
+              {% endif %}
             </div>
-        </footer>
-        {% block scriptfooter %}{% endblock %}
-    </body>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="flex flex-1">
+      <!-- Desktop sidebar - hidden on mobile -->
+      <div
+        class="w-16 border-2 border-gray-200 bg-white z-1 flex-col justify-between hidden md:flex"
+      >
+        <div>
+          <div class="inline-flex size-16 items-center justify-center">
+            <a href="{% url 'home' %}">
+              <span
+                class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600"
+              >
+                <img
+                  src="{% static 'images/logo.png' %}"
+                  alt="Vote Election Icon"
+                  class="size-7"
+                />
+              </span>
+            </a>
+          </div>
+          <div class="border-t border-gray-100">
+            <div class="px-2">
+              <ul class="space-y-1 border-t border-gray-100 pt-4">
+                <li>
+                  <a
+                    href="{% url 'list' %}"
+                    class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 opacity-75"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5" />
+                      <path
+                        d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z"
+                      />
+                    </svg>
+                    <span
+                      class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible"
+                    >
+                      Dropboxes
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="{% url 'map' %}"
+                    class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 opacity-75"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="10" r="3" />
+                      <path
+                        d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"
+                      />
+                    </svg>
+                    <span
+                      class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible"
+                    >
+                      Map
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="{% url 'video-list' %}"
+                    class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 opacity-75"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <rect
+                        x="2"
+                        y="2"
+                        width="20"
+                        height="20"
+                        rx="2.18"
+                        ry="2.18"
+                      ></rect>
+                      <line x1="7" y1="2" x2="7" y2="22"></line>
+                      <line x1="17" y1="2" x2="17" y2="22"></line>
+                      <line x1="2" y1="12" x2="22" y2="12"></line>
+                      <line x1="2" y1="7" x2="7" y2="7"></line>
+                      <line x1="2" y1="17" x2="7" y2="17"></line>
+                      <line x1="17" y1="17" x2="22" y2="17"></line>
+                      <line x1="17" y1="7" x2="22" y2="7"></line>
+                    </svg>
+                    <span
+                      class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible"
+                    >
+                      Recordings
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="{% url 'accounts' %}"
+                    class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 opacity-75"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                    <span
+                      class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible"
+                    >
+                      Accounts
+                    </span>
+                  </a>
+                </li>
+                {% if user.is_authenticated %}
+                <li>
+                  <a
+                    href="{% url 'logout' %}"
+                    class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 opacity-75"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
+                    <span
+                      class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible"
+                    >
+                      Logout
+                    </span>
+                  </a>
+                </li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-gray-100 bg-white p-2"></div>
+      </div>
+      <div class="flex flex-col flex-1 w-full">
+        <nav aria-label="Breadcrumb" class="ml-4 md:ml-10 mt-5">
+          <ol class="flex items-center gap-1 text-sm text-gray-700">
+            <li>
+              <a
+                href="{% url 'home' %}"
+                class="block transition-colors hover:text-gray-900"
+                aria-label="Home"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="size-4 opacity-75"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                  />
+                </svg>
+              </a>
+            </li>
+            <li class="rtl:rotate-180">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="size-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </li>
+            <li>{% block breadcrumb %}{% endblock %}</li>
+          </ol>
+        </nav>
+        <main class="flex-1 flex flex-col">
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+    <footer class="bg-white border-t border-gray-200">
+      <div class="px-4 py-6 sm:px-6 lg:px-8">
+        <div class="sm:flex sm:justify-between">
+          <p class="text-xs text-gray-500">
+            &copy; 2025. KU Capstone Team 40 - All rights reserved.
+          </p>
+          <ul
+            class="mt-4 flex flex-wrap justify-start gap-4 text-xs sm:mt-0 lg:justify-end"
+          >
+            <li>
+              <a href="#" class="text-gray-500 transition hover:opacity-75"
+                >Terms & Conditions</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-gray-500 transition hover:opacity-75"
+                >Privacy Policy</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-gray-500 transition hover:opacity-75"
+                >Cookies</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+    {% block scriptfooter %}{% endblock %}
+  </body>
 </html>

@@ -177,9 +177,11 @@ def account_login(request):
     template = loader.get_template('login.html')
     return HttpResponse(template.render(context, request))
 
+@login_required
 def register(request): 
     context = {
-        "error_message": "" 
+        "error_message": "" ,
+        "success_message": "" 
     }
 
     access_rejected = request.GET.get("next")
@@ -202,8 +204,7 @@ def register(request):
                     context["error_message"] = "User already exists with those credentials"
                 else: 
                     user = User.objects.create_user(username=username, email=email, password=password) # save user to database 
-                    login(request, user)
-                    return HttpResponseRedirect("/home/")
+                    context["success_message"] = "Account created successfully"
             else: 
                 context["error_message"] = "Passwords do not match!"
     else: 
@@ -211,9 +212,12 @@ def register(request):
     return HttpResponse(template.render(context, request))
 
 @login_required
-def account(request): 
-    template = loader.get_template('account.html')
-    context = {}
+def accounts(request): 
+    template = loader.get_template('accounts.html')
+    users = User.objects.all()
+    context = {
+        'user_list': users 
+    }
     return HttpResponse(template.render(context, request))
 
 @login_required
@@ -251,8 +255,13 @@ def receive_sensor_data(request):
 
 @api_view(['GET'])
 @login_required
-def obtain_auth_token(request): 
-    token, _ = Token.objects.get_or_create(user=request.user)
-    return JsonResponse({"token": token.key})
+def obtain_auth_token(request, username): 
+    if User.objects.filter(username=username).exists(): 
+        user_requested = User.objects.get(username=username)
+        token, _ = Token.objects.get_or_create(user=user_requested)
+        return JsonResponse({"token": token.key})   
+    else: 
+        return JsonResponse({"msg": "User not found"})   
+
 
 

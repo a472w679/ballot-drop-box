@@ -18,8 +18,8 @@ urlpatterns = [
     path('accounts/register/', views.register, name='register'),
     path('accounts/login/', views.account_login, name='login'),
     path('accounts/logout/', views.account_logout, name='logout'),
-    path('accounts/', views.account, name='account'),
-    path('api-token-auth/', views.obtain_auth_token)
+    path('accounts/', views.accounts, name='accounts'),
+    path('api-token-auth/<str:username>', views.obtain_auth_token, name='obtain_auth_token')
 ]
 
 
