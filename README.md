@@ -32,6 +32,7 @@ pip install -r requirements.txt
 ```
 python3 dropbox/manage.py makemigrations 
 python3 dropbox/manage.py migrate  
+python3 dropbox/manage.py collectstatic  
 ```
 5) To test and make sure everything is working,  `python3 dropbox/manage.py runserver 0.0.0.0:8000`
 6) copy the host url into your browser 
@@ -76,16 +77,20 @@ cp scanning/config.yaml.secret scanning/config.yaml
 ```yaml
 prod: false 
 ```
-- set prod to false if testing locally, true if not 
+- setting prod to true means that the site is using https
 
-#### server
+#### server and token authorization
 ```yaml
 server: 
   host: "127.0.0.1"    # ip the django server is hosted on 
   port: 8000           # port the django server is on 
   live_feed_port: 5005 # what port the live feed is connected to
+  authentication: "your-auth-token-here" 
 ```
 - the host can be replaced with the ec2 instance ip if not testing locally 
+
+You can obtain an `auth-token` by logging into an account on the site and accessing `accounts/`
+- click on one of the accounts' API Key button to get an auth token 
 
 #### dropbox 
 Enter correct dropbox id

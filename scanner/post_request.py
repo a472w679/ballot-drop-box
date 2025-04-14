@@ -34,25 +34,35 @@ def send_data(data : dict) -> bool:
     else: 
         API_ENDPOINT = f"https://{server_config['host']}/api/scandata"
 
+    token = server_config["auth_token"]
+    headers = {
+        'Authorization': f'Token {token}',
+        'Content-Type': 'application/json'
+    }
+
     try:
         response = requests.post(
             API_ENDPOINT,
             json=data,
-            headers={'Content-Type': 'application/json'}
+            headers=headers
         )
         return response.ok 
     except Exception as e:
         print(f"Error sending data: {e}")
         return False
 
-# DEBUG test 
-# for i in range(10): 
+# debug 
+# from datetime import datetime, timedelta
+#
+# delta = timedelta(days=1)
+# for i in range(7): 
+#     date = datetime(2025, 2, 10) + i * delta
 #     send_data(
 #             {
 #                 "dropboxid" : 1, 
-#                 "date": f"{date.today()}", 
+#                 "date": f"{date.strftime('%Y-%m-%d')}", 
 #                 "imb": "", 
-#                 "code39": f"ABC-122{i}",
+#                 "code39": f"ABB-1{i}22",
 #                 "streetaddress": "", 
 #                 "city": "", 
 #                 "zipcode": "",  

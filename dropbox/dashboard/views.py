@@ -16,16 +16,25 @@ from pathlib import Path
 
 import numpy as np
 from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Count
-from django.http import HttpResponse
+from django.db.models.functions import JSONObject
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.template import loader
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
 # rest-api
-from rest_framework.decorators import api_view
+from rest_framework.decorators import (api_view, authentication_classes,
+                                       permission_classes)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from .forms import AccountLogin, AccountRegister
 from .models import EnvelopeScan
 from .serializers import EnvelopeSerializer
 
@@ -36,17 +45,20 @@ def home(request):
   context = {}
   return HttpResponse(template.render(context, request))
 
+@login_required
 def map(request):
   template = loader.get_template('map.html')
   context = {}
   return HttpResponse(template.render(context, request))
 
+@login_required
 def dropbox_list(request):
   template = loader.get_template('dropbox_list.html')
   unique_dropbox_ids = EnvelopeScan.objects.order_by('dropboxid').values_list('dropboxid', flat=True).distinct()
   context = {"dropbox_ids": unique_dropbox_ids}
   return HttpResponse(template.render(context, request))
 
+@login_required
 def video_list(request): 
   template = loader.get_template('video_list.html')
 
@@ -67,6 +79,7 @@ def video_list(request):
     context = {"media_files": media_files}
   return HttpResponse(template.render(context, request))
 
+@login_required
 def dashboard(request, dropbox_id):
   filter_by = request.GET.get('filter') 
   if not filter_by: 
@@ -120,14 +133,14 @@ def dashboard(request, dropbox_id):
     'dropbox_id': dropbox_id,
     'filter_type': filter_by,
     'chart_series': [{
-            'name': 'Envelopes Submitted',
-            'color': '#1A56DB',
+            'name': 'Envelopes Scanned',
             'data': series_data
         }],
   }
 
   return HttpResponse(template.render(context, request))
 
+@login_required
 def video(request, video_filename): 
     template = loader.get_template('video.html')
 
@@ -137,6 +150,80 @@ def video(request, video_filename):
     }
     return HttpResponse(template.render(context, request))
 
+def account_login(request):
+    context = {
+        "error_message": "" 
+    }
+
+    access_rejected = request.GET.get("next")
+    if access_rejected:  # the user tried to access login required pages 
+        context["error_message"] = "Login or register to access that page"
+
+    if request.method == 'POST': 
+        form = AccountLogin(request.POST)
+        if form.is_valid(): 
+            username = form.cleaned_data["username"]
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+
+            user_authenticated = authenticate(username=username, email=email, password=password)
+            print(username, email, password, user_authenticated) 
+            if user_authenticated:
+                login(request, user_authenticated)  # creates session
+                return HttpResponseRedirect("/home/")
+            else: 
+                context["error_message"] = "Account information incorrect!"
+
+    else: 
+        form = AccountLogin()
+
+    template = loader.get_template('login.html')
+    return HttpResponse(template.render(context, request))
+
+@login_required
+def register(request): 
+    context = {
+        "error_message": "" ,
+        "success_message": "" 
+    }
+
+    access_rejected = request.GET.get("next")
+    if access_rejected:  # the user tried to access login required pages 
+        context["error_message"] = "Login or register to access that page"
+
+    template = loader.get_template('register.html')
+    if request.method == 'POST': 
+        form = AccountRegister(request.POST)
+        if form.is_valid(): 
+            username = form.cleaned_data["username"]
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+            confirm_password = form.cleaned_data["confirm_password"]
+
+            if password == confirm_password: 
+                user_exists = User.objects.filter(username=username).exists()
+                email_exists = User.objects.filter(email=email).exists()
+                if user_exists or email_exists: 
+                    context["error_message"] = "User already exists with those credentials"
+                else: 
+                    user = User.objects.create_user(username=username, email=email, password=password) # save user to database 
+                    context["success_message"] = "Account created successfully"
+            else: 
+                context["error_message"] = "Passwords do not match!"
+    else: 
+        form = AccountRegister()
+    return HttpResponse(template.render(context, request))
+
+@login_required
+def accounts(request): 
+    template = loader.get_template('accounts.html')
+    users = User.objects.all()
+    context = {
+        'user_list': users 
+    }
+    return HttpResponse(template.render(context, request))
+
+@login_required
 def export(request, dropbox_id):  # downloads database in a csv 
     response = HttpResponse(content_type = 'text/csv')
     writer = csv.writer(response)
@@ -149,7 +236,15 @@ def export(request, dropbox_id):  # downloads database in a csv
 
     return response 
 
+def account_logout(request): 
+    logout(request)
+    template = loader.get_template('home.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def receive_sensor_data(request):
     serializer = EnvelopeSerializer(data=request.data)
     if serializer.is_valid(): # makes sure post request is valid 
@@ -160,5 +255,16 @@ def receive_sensor_data(request):
 
     res = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return res
+
+@api_view(['GET'])
+@login_required
+def obtain_auth_token(request, username): 
+    if User.objects.filter(username=username).exists(): 
+        user_requested = User.objects.get(username=username)
+        token, _ = Token.objects.get_or_create(user=user_requested)
+        return JsonResponse({"token": token.key})   
+    else: 
+        return JsonResponse({"msg": "User not found"})   
+
 
 
