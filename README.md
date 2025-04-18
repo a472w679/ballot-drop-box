@@ -1,22 +1,42 @@
 # Ballot Drop Box Scanner
 A system that scans, tracks, and stores information of ballot envelopes that are deposited in ballot drop boxes.  
 
+## Documentation Outline 
 
-## Setup 
+[Basic Initial Setup](#setup) 
+- [Setup](#setup)
+- [Installation](#installation)
+- [Installing Dependencies](#installing-dependencies)
+- [Email Service](#email-service)
+- [Testing](#testing)
 
-### Pre Reqs
-1) Make sure you have a Raspberry Pi and an AWS EC2 Instance 
-- this system was tested on a Raspberry Pi 5 Model B Rev 1.0 
-- hosting was tested on a AWS EC2 Debian instance 
+[Raspberry Pi Setup](#raspberry-pi)
+- [USB Scanners](#industrial-usb-scanner-setup)
+- [Config File](#config)
+  - [Server and Token Authorization](#server-and-token-authorization)
+- [Startup Script](#startup-script)
+
+[EC2 Instance](#aws-ec2-setup)
+- [Security Groups](#security-groups)
+- [Deploying the Django App](#ec2-instance-configuration-for-deploying-django)
+  - [Nginx](#nginx)
+  - [systemd](#systemd)
+
+This system was tested on a Raspberry Pi 5 Model B Rev 1.0 
+
+Hosting was tested on a AWS EC2 Debian instance 
+## Setup  
+Use this section either for the AWS EC2 instance or testing on your local host. 
 
 ### Installation
 ```
 git clone https://github.com/a472w679/ballot-drop-box
 
 cp scanner/config.yaml.secret scanner/config.yaml
+cp dropbox/.env.secret dropbox/.env 
 ```
 
-### Project Modules
+### Installing Dependencies
 1) Make a virtual env in the project root directory 
 ```
 python -m venv .venv 
@@ -30,14 +50,26 @@ pip install -r requirements.txt
 
 4) Make migrations 
 ```
-python3 dropbox/manage.py makemigrations 
-python3 dropbox/manage.py migrate  
-python3 dropbox/manage.py collectstatic  
+python dropbox/manage.py makemigrations 
+python dropbox/manage.py migrate  
+python dropbox/manage.py collectstatic  
 ```
-5) To test and make sure everything is working,  `python3 dropbox/manage.py runserver 0.0.0.0:8000`
-6) copy the host url into your browser 
 
-### Industrial USB Scanner Setup (Raspberry Pi)
+```
+python dropbox/manage.py createsuperuser  
+```
+- the superuser will be the credentials you use to sign in as admin on the website
+
+### Email Service 
+in `./dropbox/.env` set up an email service for email sending using the example given in `.env.secret` 
+
+### Testing
+To test and make sure everything is working,  `python dropbox/manage.py runserver 0.0.0.0:8000`
+
+copy the host url into your browser 
+
+## Raspberry Pi 
+### Industrial USB Scanner Setup 
 This enables more secure use of the interface between the scanner and the raspberry pi 
 
 1) Install pyusb  and libusb 
@@ -56,9 +88,6 @@ sudo addgroup <myuser> plugdev
 ```
 # Scanner 1 - Honeywell Granit 1910i ex 
 SUBSYSTEM=="usb", ATTR{idVendor}=="0c2e", ATTR{idProduct}=="0aaf", MODE="0666"
-
-# Scanner 2  - Honeywell Granit 1980 ex
-SUBSYSTEM=="usb", ATTR{idVendor}=="0c2e", ATTR{idProduct}=="0c61", MODE="0666"
 ```
 For each scanner that exists, add its corresponding correct idVendor and idProduct numbers 
 - Correct idVendor and idProduct numbers for scanners can be found using `lsusb -v`
@@ -66,18 +95,11 @@ For each scanner that exists, add its corresponding correct idVendor and idProdu
 
 More information: https://github.com/vpatron/barcode_scanner_python 
 
-### Config (Raspberry Pi)
+### Config 
 ```
 cp scanning/config.yaml.secret scanning/config.yaml 
 ```
 - config.yaml.secret is an example 
-
-[`scanner/config.yaml`]
-#### prod
-```yaml
-prod: false 
-```
-- setting prod to true means that the site is using https
 
 #### server and token authorization
 ```yaml
@@ -120,10 +142,10 @@ scanners:
     product_id: 0x0aaf
 
   # ...
-  # add more scanners as needed
+  # add more scanners if needed
 ```
 
-### Startup Script Setup (Raspberry Pi)
+### Startup Script 
 1) Create a .desktop file `~/.config/autostart/ballot-dropbox-start.desktop` 
 
 ```
@@ -151,16 +173,10 @@ ln -s `~/.config/autostart/ballot-dropbox-start.desktop`
 ```
 - When the RPi starts up, the start.py script should run. You can start it again using the icon on the desktop.  
 
-
-### How do I run it manually? 
-```
-python3 dropbox/manage.py runserver 0.0.0.0:8000
-```
-
-### AWS EC2 Setup 
+## AWS EC2 Setup 
 
 This was tested on a debian EC2  instance 
-#### Security Groups 
+### Security Groups 
 Django server 
 - CUSTOM TCP port range 8000
 
@@ -172,7 +188,7 @@ Incoming Live Feed
 
 CIDR: 0.0.0.0/0
 
-### EC2 Instance Configuration
+### EC2 Instance Configuration for Deploying Django
 SSH into the instance using security.pem
 - `ssh -i "security.pem" admin@ec2-domain`
 
@@ -191,7 +207,7 @@ redis-cli ping
 > PONG 
 ```
 
-4) Make migrations  
+4) [Install dependencies](#installing-dependencies) and make migrations  
 ```
 python3 dropbox/manage.py makemigrations 
 python3 dropbox/manage.py migrate  
@@ -203,7 +219,7 @@ DEBUG = False  # set debug to false
 ALLOWED_HOSTS = ["ec2-server-ip"]
 ```
 
-5) Setup nginx  
+#### nginx  
 ```
 sudo apt install nginx
 sudo systemctl stop nginx
@@ -234,7 +250,10 @@ sudo nginx -t  # Test config
 sudo systemctl start nginx
 ```
 
-6) Make systemd services 
+#### Systemd
+Make systemd services in `/etc/systemd/system`
+
+[django.service]
 ```
 [Unit]
 Description=Django RunServer
@@ -251,6 +270,7 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
+[udp_receiver.service]
 ```
 [Unit]
 Description=Django Start UDP Receiver
@@ -265,6 +285,12 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
+```
+7) Run the systemd services 
+```
+systemctl daemon-reload
+systemctl start django.service
+systemctl start udp_receiver.service
 ```
 
 

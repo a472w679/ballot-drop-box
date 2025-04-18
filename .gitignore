@@ -4,4 +4,4 @@
 **/db.sqlite3
 dropbox/dashboard/static/media/*
 **/staticfiles
-.env
+**/.env

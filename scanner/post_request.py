@@ -52,21 +52,21 @@ def send_data(data : dict) -> bool:
         return False
 
 # debug 
-# from datetime import datetime, timedelta
-#
-# delta = timedelta(days=1)
-# for i in range(7): 
-#     date = datetime(2025, 2, 10) + i * delta
-#     send_data(
-#             {
-#                 "dropboxid" : 1, 
-#                 "date": f"{date.strftime('%Y-%m-%d')}", 
-#                 "imb": "", 
-#                 "code39": f"ABB-1{i}22",
-#                 "streetaddress": "", 
-#                 "city": "", 
-#                 "zipcode": "",  
-#                 "status": "Valid"
-#             }
-#     )
+from datetime import datetime, timedelta
+
+delta = timedelta(days=1)
+for i in range(7): 
+    date = datetime(2025, 2, 10) + i * delta
+    send_data(
+            {
+                "dropboxid" : 1, 
+                "date": f"{date.strftime('%Y-%m-%d')}", 
+                "imb": "", 
+                "code39": f"ABB-1{i}22",
+                "streetaddress": "", 
+                "city": "", 
+                "zipcode": "",  
+                "status": "Valid"
+            }
+    )
 

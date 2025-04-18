@@ -300,14 +300,23 @@ def account_logout(request):
     context = {}
     return HttpResponse(template.render(context, request))
 
-def notfound(request): 
+def handler404(request): 
     template = loader.get_template('404.html')
-    context = {}
+    context = {
+    }
     return HttpResponse(template.render(context, request))
 
-def servererror(request): 
+
+def handler403(request): 
+    template = loader.get_template('403.html')
+    context = {
+    }
+    return HttpResponse(template.render(context, request))
+
+def handler500(request): 
     template = loader.get_template('500.html')
-    context = {}
+    context = {
+    }
     return HttpResponse(template.render(context, request))
 
 
