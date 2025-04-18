@@ -1,0 +1,59 @@
+<!-- dashboard/templates/export_csv.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body, table, td { margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
+    .wrapper { width: 100%; background: #f4f6f8; padding: 20px 0; }
+    .content { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .header { background: #1a73e8; color: #ffffff; text-align: center; padding: 30px 20px; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .body { padding: 30px 20px; color: #333333; line-height: 1.5; }
+    .body p { margin-bottom: 20px; }
+    .button { display: inline-block; padding: 12px 24px; background: #1a73e8; color: #ffffff !important; border-radius: 4px; font-weight: bold; }
+    .footer { text-align: center; font-size: 12px; color: #999999; padding: 20px; }
+  </style>
+</head>
+<body>
+  <table role="presentation" class="wrapper" width="100%">
+    <tr>
+      <td align="center">
+        <table role="presentation" class="content" width="100%">
+          <!-- Header -->
+          <tr>
+            <td class="header">
+              <h1>Ballot Dropbox</h1>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td class="body">
+              <!-- Greeting as plain text -->
+              <p>Hi {{ user.first_name|default:user.username }},</p>
+
+              <p>Your CSV export for <strong>Dropbox #{{ dropbox_id }}</strong> is attached.</p>
+
+              <p style="text-align:center;">
+                <a href="{{ dashboard_url }}" class="button">View Dashboard</a>
+              </p>
+
+              <!-- Reworded closing -->
+              <p>Thanks for using our dropbox export tool! If you need anything, just reply to this email or write to <a href="mailto:dropboxballot@gmail.com">dropboxballot@gmail.com</a>.</p>
+
+              <p>— The Ballot Dropbox Team</p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td class="footer">
+              Need help? <a href="mailto:dropboxballot@gmail.com">dropboxballot@gmail.com</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
