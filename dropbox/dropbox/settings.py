@@ -12,10 +12,16 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+from channels.layers import InMemoryChannelLayer
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# load .env automatically
+env_path = BASE_DIR / '.env'
+if env_path.exists():
+    load_dotenv(env_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -24,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-hqm0*t^(uly@q_30*i8hwusjasn-@2hg^+iqmmdd2w@j10uw$@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -48,13 +54,9 @@ ASGI_APPLICATION = 'dropbox.asgi.application'
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],  # For local testing
-        },
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -151,6 +153,18 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# ─────────── Gmail SMTP settings ───────────
+EMAIL_BACKEND        = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST           = 'smtp.gmail.com'
+EMAIL_PORT           = 587
+EMAIL_USE_TLS        = True
+
+EMAIL_HOST_USER    = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD= os.getenv('EMAIL_HOST_PASSWORD')
+
+DEFAULT_FROM_EMAIL   = EMAIL_HOST_USER
+# ─────────── end Gmail SMTP settings ───────────
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
