@@ -13,6 +13,7 @@ import csv
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
+from io import StringIO
 
 import numpy as np
 from django.conf import settings
@@ -23,8 +24,13 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.db.models.functions import JSONObject
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.urls import reverse
 from django.template import loader
+from django.contrib import messages
+from django.core.mail import EmailMessage
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
@@ -141,6 +147,58 @@ def dashboard(request, dropbox_id):
   return HttpResponse(template.render(context, request))
 
 @login_required
+def export_email(request, dropbox_id):
+    # 1) Build CSV in‑memory
+    buffer = StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow([
+        'Dropbox ID', 'Code 39', 'IMb',
+        'Date', 'Street Address', 'City',
+        'Zip Code', 'Status'
+    ])
+
+    # ← define qs here
+    qs = EnvelopeScan.objects.filter(dropboxid=dropbox_id)
+    for row in qs.values_list(
+        'dropboxid','code39','imb',
+        'date','streetaddress','city',
+        'zipcode','status'
+    ):
+        writer.writerow(row)
+
+    # 2) Prepare subject/addresses
+    subject = f"Your Dropbox #{dropbox_id} CSV Export"
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = [request.user.email]
+
+    # 3) Plain‑text fallback
+    text_content = (
+        f"Hi {request.user.username},\n\n"
+        f"Your CSV export for Dropbox #{dropbox_id} is attached.\n\n"
+        "Thanks,\nBallot Dropbox Team"
+    )
+
+    # 4) HTML version
+    html_content = render_to_string(
+        "emails/export_csv.html",
+        {
+            "user": request.user,
+            "dropbox_id": dropbox_id,
+            "dashboard_url": request.build_absolute_uri(
+                reverse("dashboard", args=[dropbox_id])
+            ),
+        }
+    )
+
+    # 5) Build & send multipart email
+    email = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+    email.attach_alternative(html_content, "text/html")
+    email.attach(f"dropbox_{dropbox_id}.csv", buffer.getvalue(), "text/csv")
+    email.send(fail_silently=False)
+
+    messages.success(request, f"CSV emailed to {request.user.email}")
+    return redirect("dashboard", dropbox_id=dropbox_id)
+    
 def video(request, video_filename): 
     template = loader.get_template('video.html')
 
@@ -275,7 +333,4 @@ def obtain_auth_token(request, username):
         token, _ = Token.objects.get_or_create(user=user_requested)
         return JsonResponse({"token": token.key})   
     else: 
-        return JsonResponse({"msg": "User not found"})   
-
-
-
+        return JsonResponse({"msg": "User not found"})
