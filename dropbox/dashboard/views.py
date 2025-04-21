@@ -12,25 +12,24 @@
 import csv
 import os
 from datetime import datetime, timedelta
-from pathlib import Path
 from io import StringIO
+from pathlib import Path
 
 import numpy as np
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.db.models.functions import JSONObject
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, redirect
-from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import redirect, render
+from django.template import loader
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.template import loader
-from django.contrib import messages
-from django.core.mail import EmailMessage
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
@@ -88,7 +87,16 @@ def video_list(request):
 @login_required
 def dashboard(request, dropbox_id):
   filter_by = request.GET.get('filter') 
-  if not filter_by: 
+
+  # to avoid sql injection  
+  accepted_filters = {
+        '-date', 
+        'date', 
+        'code39', 
+        '-code39'
+  }
+
+  if filter_by not in accepted_filters: 
         filter_by = '-date'
   
   envelope_data = EnvelopeScan.objects.all().filter(dropboxid=dropbox_id).order_by(f'{filter_by}')
