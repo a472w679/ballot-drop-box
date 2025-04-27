@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import EnvelopeScan
+from .models import Dropbox, EnvelopeScan
 
 
 class EnvelopeSerializer(serializers.ModelSerializer):
@@ -14,4 +14,9 @@ class EnvelopeSerializer(serializers.ModelSerializer):
             'zipcode': {'required': False, 'allow_blank': True, 'allow_null': True},
             'status': {'required': False, 'allow_blank': True, 'allow_null': True},
         }
+
+class DropboxSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dropbox
+        fields = '__all__'  # Or specify fields: ['id', 'location_name', 'street_address']
 

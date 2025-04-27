@@ -8,40 +8,48 @@
 <!-- // Error and exception condition values or types that can occur, and their meanings: N/A -->
 <!-- // Side effects: -->
 <!-- // Invariants: N/A -->
-{% extends 'base.html' %}
-{% load static %}
-{% block title %}Map{% endblock %}
+{% extends 'base.html' %} {% load static %} {% block title %}Map{% endblock %}
 {% block head %}
-    <link rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin="" />
-    <!-- Make sure you put this AFTER Leaflet's CSS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin=""></script>
-{% endblock %}
-{% block breadcrumb %}
-    <li>
-        <a href="{% url 'map' %}"
-           class="group relative flex justify-center rounded-sm pt-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg"
-                 class="size-4"
-                 fill="none"
-                 viewBox="0 0 24 24"
-                 stroke="currentColor"
-                 stroke-width="2">
-                <circle cx="12" cy="10" r="3" />
-                <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" />
-            </svg>
-            <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
-                Map
-            </span>
-        </a>
-    </li>
-{% endblock %}
-{% block content %}
-    <style>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+{% endblock %} {% block breadcrumb %}
+<li>
+  <a
+    href="{% url 'map' %}"
+    class="group relative flex justify-center rounded-sm pt-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="size-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <circle cx="12" cy="10" r="3" />
+      <path
+        d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"
+      />
+    </svg>
+    <span
+      class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded-sm bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible"
+    >
+      Map
+    </span>
+  </a>
+</li>
+{% endblock %} {% block content %}
+<style>
   .leaflet-attribution-flag {
     display: none !important;
   }
@@ -129,10 +137,72 @@
     color: gray;
     border-radius: 1px;
   }
-    </style>
-    <div id="map"
-         class="hs-leaflet ml-10 mr-10 mb-10 mt-5  h-screen w-max-full border-2 border-gray-100 shadow-sm z-0"></div>
-{% endblock %}
-{% block scriptfooter %}
-    <script type="text/javascript" src="{% static 'js/map_leaflet.js' %}"></script>
+</style>
+<div
+  id="map"
+  class="hs-leaflet ml-10 mr-10 mb-10 mt-5 h-screen w-max-full border-2 border-gray-100 shadow-sm z-0"
+></div>
+{% endblock %} {% block scriptfooter %}
+<script>
+  // Initialize the map
+  var map = L.map("map").setView([38.952, -95.255], 10);
+
+  // Add OpenStreetMap tiles
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  // Default fallback coordinates if parsing fails
+  var defaultCoords = [38.952, -95.255];
+  var markers = [];
+
+  {% for dropbox in dropboxes %}
+    try {
+      // Try to parse coordinates - handle various formats
+      var coordsText = "{{ dropbox.coordinates|escapejs }}".trim();
+      var coords;
+
+      // Case 1: Comma-separated "lat, lng"
+      if (coordsText.includes(',')) {
+        coords = coordsText.split(',').map(coord => parseFloat(coord.trim()));
+      }
+      // Case 2: Space-separated "lat lng"
+      else if (coordsText.includes(' ')) {
+        coords = coordsText.split(' ').map(coord => parseFloat(coord.trim()));
+      }
+      // Case 3: Single number (invalid)
+      else {
+        throw new Error('Invalid coordinate format');
+      }
+
+      // Validate coordinates
+      if (coords.length !== 2 || isNaN(coords[0]) || isNaN(coords[1])) {
+        throw new Error('Invalid coordinates');
+      }
+
+      // Create marker
+      var marker = L.marker(coords).addTo(map);
+      markers.push(marker);
+
+      // Add popup
+      marker.bindPopup(
+        `<div>
+          <strong>${"{{ dropbox.location_name|escapejs }}"}</strong><br>
+          <a href="/dashboard/{{ dropbox.dropboxid }}">View Details</a><br>
+          <small>Coordinates: ${coordsText}</small>
+        </div>`
+      );
+
+    } catch (e) {
+      console.error('Error processing dropbox {{ dropbox.dropboxid }}:', e);
+    }
+  {% endfor %}
+
+  // Fit map to show all markers if any exist
+  if (markers.length > 0) {
+    var group = new L.featureGroup(markers);
+    map.fitBounds(group.getBounds().pad(0.2));
+  }
+</script>
 {% endblock %}

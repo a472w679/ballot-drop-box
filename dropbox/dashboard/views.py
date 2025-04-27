@@ -26,7 +26,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.db.models.functions import JSONObject
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -39,9 +39,9 @@ from rest_framework.decorators import (api_view, authentication_classes,
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .forms import AccountLogin, AccountRegister
-from .models import EnvelopeScan
-from .serializers import EnvelopeSerializer
+from .forms import AccountLogin, AccountRegister, DropboxCreate
+from .models import Dropbox, EnvelopeScan
+from .serializers import DropboxSerializer, EnvelopeSerializer
 
 # Create your views here.
 
@@ -53,14 +53,16 @@ def home(request):
 @login_required
 def map(request):
   template = loader.get_template('map.html')
-  context = {}
+  dropboxes = Dropbox.objects.order_by('dropboxid') 
+  context = {"dropboxes": dropboxes}
   return HttpResponse(template.render(context, request))
 
 @login_required
 def dropbox_list(request):
   template = loader.get_template('dropbox_list.html')
-  unique_dropbox_ids = EnvelopeScan.objects.order_by('dropboxid').values_list('dropboxid', flat=True).distinct()
-  context = {"dropbox_ids": unique_dropbox_ids}
+  # unique_dropbox_ids = EnvelopeScan.objects.order_by('dropboxid').values_list('dropboxid', flat=True).distinct()
+  dropboxes = Dropbox.objects.order_by('dropboxid') 
+  context = {"dropboxes": dropboxes}
   return HttpResponse(template.render(context, request))
 
 @login_required
@@ -140,7 +142,10 @@ def dashboard(request, dropbox_id):
     } for day_label, target_date in zip(date_labels, target_dates)]
 
   template = loader.get_template('dropbox.html')
+  dropbox = Dropbox.objects.get(dropboxid=dropbox_id)  
+
   context = {
+    'dropbox_name': dropbox.location_name,
     'num_scanned': num_scanned,
     'num_motion_detections': num_motion_detections,
     'page_obj': page_obj,
@@ -302,6 +307,43 @@ def export(request, dropbox_id):  # downloads database in a csv
 
     return response 
 
+@login_required
+def create_dropbox(request): 
+    template = loader.get_template('dropbox_list.html')
+
+    if request.method == 'POST': 
+        form = DropboxCreate(request.POST)
+        if form.is_valid(): 
+            id = form.cleaned_data["dropboxid"]
+            form_data = {
+                'dropboxid': form.cleaned_data["dropboxid"],
+                'location_name': form.cleaned_data['location_name'],
+                'coordinates': form.cleaned_data['coordinates']
+            }
+
+            serializer = DropboxSerializer(data=form_data)
+
+            if serializer.is_valid(): 
+                serializer.save()
+                return redirect("list")
+
+
+
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+@login_required
+def delete_dropbox(request, dropbox_id): 
+    template = loader.get_template('dropbox_list.html')
+
+    # delete 
+    dropbox = get_object_or_404(Dropbox, dropboxid=dropbox_id)
+    EnvelopeScan.objects.filter(dropboxid=dropbox_id).delete() # delete envelope scans with this dropbox id
+    dropbox.delete()
+
+    context = {}
+    return redirect("list")
+
 def account_logout(request): 
     logout(request)
     template = loader.get_template('home.html')
@@ -326,6 +368,7 @@ def handler500(request):
     context = {
     }
     return HttpResponse(template.render(context, request))
+
 
 
 @api_view(['POST'])

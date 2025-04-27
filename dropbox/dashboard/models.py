@@ -1,10 +1,14 @@
 from django.db import models
 
 
-# Create your models here.
+class Dropbox(models.Model): 
+    dropboxid = models.IntegerField(primary_key=True)  # Your visible ID
+    location_name  = models.CharField(max_length=66)
+    coordinates = models.CharField(max_length=66)
+
 class EnvelopeScan(models.Model):
     id = models.AutoField(primary_key=True)
-    dropboxid = models.IntegerField(default=1)  # Required (default doesn't make it optional)
+    dropboxid = models.ForeignKey(Dropbox, on_delete=models.CASCADE, related_name='scans')
     imb = models.CharField(max_length=66, blank=True, null=True)  # Optional
     code39 = models.CharField(max_length=44, unique=True)  # Required
     date = models.CharField(max_length=255)  # Required
@@ -15,4 +19,3 @@ class EnvelopeScan(models.Model):
 
     def __str__(self):
         return f"EnvelopeScan {self.code39}"
-
