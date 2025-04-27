@@ -12,4 +12,9 @@ class AccountRegister(forms.Form):
     password = forms.CharField(label="password", max_length=128)
     confirm_password = forms.CharField(label="confirm_password", max_length=128)
 
+class DropboxCreate(forms.Form): 
+    dropboxid  = forms.IntegerField()
+    location_name  = forms.CharField(max_length=66)
+    coordinates = forms.CharField(max_length=66)
+
 

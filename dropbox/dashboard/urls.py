@@ -20,6 +20,8 @@ urlpatterns = [
     path('accounts/login/', views.account_login, name='login'),
     path('accounts/logout/', views.account_logout, name='logout'),
     path('accounts/', views.accounts, name='accounts'),
+    path('create-dropbox/', views.create_dropbox, name='create_dropbox'),
+    path('delete-dropbox/<int:dropbox_id>', views.delete_dropbox, name='delete_dropbox'),
     path('api-token-auth/<str:username>', views.obtain_auth_token, name='obtain_auth_token'),
 
     path('404/', views.handler404, name='notfound'),
