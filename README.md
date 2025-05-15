@@ -1,7 +1,17 @@
 # Ballot Drop Box Scanner
 A system that scans, tracks, and stores information of ballot envelopes that are deposited in ballot drop boxes.  
 
-## Documentation Outline 
+![Capstone Poster](./poster.png)
+
+## About
+This repository contains the code for both the webapp portal `./dropbox`, and the raspberry pi scanning code `./scanner`. 
+- Steps for deploying the webapp involve using an AWS EC2 Instance. 
+- This system was tested on a Raspberry Pi 5 Model B Rev 1.0 
+- Hosting was tested on a AWS EC2 Debian instance 
+
+
+
+## Documentation  
 
 [Basic Initial Setup](#setup) 
 - [Setup](#setup)
@@ -22,9 +32,6 @@ A system that scans, tracks, and stores information of ballot envelopes that are
   - [Nginx](#nginx)
   - [systemd](#systemd)
 
-This system was tested on a Raspberry Pi 5 Model B Rev 1.0 
-
-Hosting was tested on a AWS EC2 Debian instance 
 ## Setup  
 Use this section either for the AWS EC2 instance or testing on your local host. 
 
@@ -301,13 +308,13 @@ Sorry, there are a lot of moving parts
 ### Where is the web app?
 `./dropbox/dashboard`
 
-Html stuff is in `./dropbox/dashboard/templates`
-
-### Where is the Database/Schema?
-`./dropbox/dashboard/models.py`
+Html templates are in `./dropbox/dashboard/templates`
 
 ### Where is the rasberry pi/barcode scanning code?
 `./scanner/`
+
+## Future Improvements 
+- Move to tailwind production build instead of CDN 
 
 ## Credits  
 https://github.com/vpatron/barcode_scanner_python
